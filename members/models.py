@@ -1,3 +1,5 @@
+# code 200
+
 from django.db import models
 
 from base.models import BaseModel, gender, State

@@ -67,7 +67,26 @@ class State(GenericBaseModel):
         return state
 
 
+class TransactionType(GenericBaseModel):
+    """
+    store types of transaction in the database e.g. add member
+    """
+    simple_name = models.CharField(max_length=50)
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.simple_name}"
+
+    class Meta(GenericBaseModel.Meta):
+        unique_together = ('name',)
 
 
+class Transaction(GenericBaseModel):
+    transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE)
+    request = models.TextField(null=True, blank=True)
+    response = models.TextField(null=True, blank=True)
+    response_code = models.CharField(max_length=20, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
 
-
+    def __str__(self):
+        return f"{self.transaction_type} {self.state})"
