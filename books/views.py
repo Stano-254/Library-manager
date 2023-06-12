@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import re_path
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
-def index():
+@csrf_exempt
+def index(request):
     return HttpResponse("books oks")
 
 urlpatterns = [
