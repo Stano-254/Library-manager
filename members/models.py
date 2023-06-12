@@ -11,7 +11,7 @@ class Members(BaseModel):
     mobile_no = models.CharField(max_length=15)
     gender = models.CharField(max_length=2,choices=gender())
     membership_no = models.CharField(max_length=10)
-    state = models.ForeignKey(State, on_delete=models.CASCADE())
+    state = models.ForeignKey(State, default=State.default_state, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
