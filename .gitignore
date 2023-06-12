@@ -3,6 +3,7 @@
 *.pot
 *.pyc
 __pycache__
+*/__pycache__/*
 db.sqlite3
 media
 
@@ -31,6 +32,7 @@ media
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea/
 
 
 # File-based project format
