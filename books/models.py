@@ -7,18 +7,7 @@ from members.models import Members
 # Create your models here.
 
 class Author(GenericBaseModel):
-    # FRESHMAN = "FR"
-    # SOPHOMORE = "SO"
-    # JUNIOR = "JR"
-    # SENIOR = "SR"
-    # GRADUATE = "GR"
-    # YEAR_IN_SCHOOL_CHOICES = [
-    #     (FRESHMAN, "Freshman"),
-    #     (SOPHOMORE, "Sophomore"),
-    #     (JUNIOR, "Junior"),
-    #     (SENIOR, "Senior"),
-    #     (GRADUATE, "Graduate"),
-    # ]
+
     salutation = models.CharField(choices=salutations(), max_length=5)
     state = models.ForeignKey(State, default=State.default_state, on_delete=models.CASCADE)
 
@@ -36,6 +25,7 @@ class Books(BaseModel):
     title = models.CharField(max_length=100)
     published_date = models.DateField()
     edition = models.CharField(max_length=10)
+    ISBN = models.CharField(max_length=25, unique=True)
     book_image = models.ImageField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

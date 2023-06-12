@@ -9,20 +9,7 @@ def salutations():
     return collection of salutation tittles
     :return: salutation choices
     """
-    FRESHMAN = "FR"
-    SOPHOMORE = "SO"
-    JUNIOR = "JR"
-    SENIOR = "SR"
-    GRADUATE = "GR"
-    YEAR_IN_SCHOOL_CHOICES = [
-        (FRESHMAN, "Freshman"),
-        (SOPHOMORE, "Sophomore"),
-        (JUNIOR, "Junior"),
-        (SENIOR, "Senior"),
-        (GRADUATE, "Graduate"),
-    ]
-    salutations = [('Prof', 'Professor'), ('Dr', 'Doctor'), ('Mr', 'Mr'), ('Mrs', 'Mrs'), ('Miss', 'Miss'), ('Ms', 'Ms')]
-    return YEAR_IN_SCHOOL_CHOICES
+    return [('Prof', 'Professor'), ('Dr', 'Doctor'), ('Mr', 'Mr'), ('Mrs', 'Mrs'), ('Miss', 'Miss'), ('Ms', 'Ms')]
 
 
 def gender():
