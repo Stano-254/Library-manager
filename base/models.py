@@ -81,7 +81,7 @@ class TransactionType(GenericBaseModel):
         unique_together = ('name',)
 
 
-class Transaction(GenericBaseModel):
+class Transaction(BaseModel):
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE)
     request = models.TextField(null=True, blank=True)
     response = models.TextField(null=True, blank=True)
