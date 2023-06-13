@@ -14,7 +14,7 @@ class Author(GenericBaseModel):
     def __str__(self):
         return f"{self.salutation} {self.name}"
 class Category(GenericBaseModel):
-    state = models.ForeignKey(State,default=State.default_state, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, default=State.default_state, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name}"
@@ -33,8 +33,6 @@ class Books(BaseModel):
 
     def __str__(self):
         return f"{self.title} - {self.author}"
-
-
 class BookIssued(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     member = models.ForeignKey(Members, on_delete=models.CASCADE)
