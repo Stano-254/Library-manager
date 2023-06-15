@@ -6,8 +6,100 @@ from books.backend.service import AuthorService, CategoryService, BookService
 class BooksAdministration(TransactionLogBase):
     """
     handle the administration functionality relating to Books including CRUD
-
     """
+    # Author CRUD
+    def create_author(self, request, **kwargs):
+        """
+        Add authors to the database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def get_author(self, request, **kwargs):
+        """
+        Get author from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def get_authors(self, request, **kwargs):
+        """
+        Get authors from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def update_author(self, request, **kwargs):
+        """
+        update author from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def delete_author(self, request, **kwargs):
+        """
+        update author from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    # Category CRUD
+    def create_category(self, request, **kwargs):
+        """
+        Add authors to the database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def get_category(self, request, **kwargs):
+        """
+        Get author from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def get_categories(self, request, **kwargs):
+        """
+        Get authors from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def update_category(self, request, **kwargs):
+        """
+        update author from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def delete_category(self, request, **kwargs):
+        """
+        update author from database
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    # Book CRUD
     def create_book(self, request, **kwargs):
         """
           Handles adding of books in the library system
