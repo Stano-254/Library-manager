@@ -71,7 +71,29 @@ class BooksAdministration(TransactionLogBase):
         :param kwargs:
         :return:
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('UpdateAuthor',request=request, user=request.user)
+            if not transaction:
+                return {'code':'900.500.500','message':'Update author transaction failed'}
+            author_id = kwargs.pop('author_id')
+            if not validate_uuid4(author_id):
+                self.mark_transaction_failed(transaction,message="Invalid author identifier",response_code="300.001.004")
+                return {'code':'300.001.004','message':'Invalid author identifier'}
+            author = AuthorService().get(id=author_id)
+            if not author:
+                self.mark_transaction_failed(transaction,message="Author not found",reponse_code='300.001.404')
+                return {'code':'300.001.404','message':'Author not found'}
+            update_author = AuthorService().update(author.id,**kwargs)
+            if not update_author:
+                self.mark_transaction_failed(transaction,message='Author not update',response_code='300.001.002')
+                return {'code':'300.001.002','message':'Author update failed'}
+            self.complete_transaction(transaction,response_code='100.000.000',message='Success')
+            return {'code':'100.000.000','message':'Success'}
+        except Exception as e:
+            lgr.exception(f"Error Failed to update author {e}")
+            return {'code':'999.999.999','message':'Error updating author'}
+
 
     def delete_author(self, request, author_id):
         """
