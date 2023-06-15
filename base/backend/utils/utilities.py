@@ -1,9 +1,11 @@
 import json
 import logging
+from uuid import UUID
 
 from django.http import QueryDict
 
 lgr = logging.getLogger(__name__)
+
 
 def get_request_data(request):
     """
@@ -40,3 +42,15 @@ def get_request_data(request):
     except Exception as e:
         lgr.exception(f"get_request_data Exception: {e}")
     return QueryDict()
+
+
+def validate_uuid4(uuid_string):
+    """
+    Validate that a UUID string is in fact a valid uuid4.
+    """
+    # noinspection PyBroadException
+    try:
+        _ = UUID(uuid_string, version=4)
+    except Exception:
+        return False
+    return True

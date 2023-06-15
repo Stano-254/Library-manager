@@ -9,10 +9,13 @@ from base.backend.utils.utilities import get_request_data
 from books.administration.books_administration import BooksAdministration
 
 lgr = logging.getLogger(__name__)
+
+
 # Create your views here.
 @csrf_exempt
 def index(request):
     return HttpResponse("books oks")
+
 
 @csrf_exempt
 def create_book(request):
@@ -21,7 +24,8 @@ def create_book(request):
         return JsonResponse(BooksAdministration().create_book(request, **kwargs))
     except Exception as e:
         lgr.exception(f"Create book error {e}")
-        return JsonResponse({'code':"500.000.100","message":"Failure during book creation"})
+        return JsonResponse({'code': "500.000.100", "message": "Failure during book creation"})
+
 
 urlpatterns = [
     re_path(r'^get_book/$', index),

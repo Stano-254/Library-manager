@@ -85,6 +85,7 @@ class Transaction(BaseModel):
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE)
     request = models.TextField(null=True, blank=True)
     response = models.TextField(null=True, blank=True)
+    message = models.CharField(max_length=200, null=True, blank=True)
     response_code = models.CharField(max_length=20, null=True, blank=True)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
 

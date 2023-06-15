@@ -1,4 +1,9 @@
-class BooksAdministration(object):
+from base.backend.transactionlogbase import TransactionLogBase
+from base.backend.utils.utilities import validate_uuid4
+from books.backend.service import AuthorService, CategoryService, BookService
+
+
+class BooksAdministration(TransactionLogBase):
     """
     handle the administration functionality relating to Books including CRUD
     """
@@ -10,11 +15,34 @@ class BooksAdministration(object):
           :param kwargs: keyword arguments for creation of book.
           :return: dict response with code 
           """
-        author_id = kwargs.pop('author')
-        category_id = kwargs.pop('category')
+        try:
+            transaction = self.log_transaction(transaction_type="CreateBook", request=request, user=request.user)
+            if not transaction:
+                return {'code': '700.500.500', 'message': 'Transaction Failed'}
+            author_id = kwargs.pop('author')
+            category_id = kwargs.pop('category')
+            author = AuthorService().get(id=author_id) if validate_uuid4(author_id) else AuthorService().filter(
+                name=author_id).first()
+            if not author:
+                self.mark_transaction_failed(transaction, message="Author not found", response_code="300.001.001")
+                return {'code': '300.001.001', 'message': 'Author not found'}
 
-        print(kwargs)
-        return {'code': '100.000.000', 'message': 'success'}
+            kwargs['author'] = author
+            category = CategoryService().get(id=category_id) if validate_uuid4(
+                category_id) else CategoryService().filter(name=category_id).first()
+            if not category:
+                self.mark_transaction_failed(transaction, message="Category not found", response_code="300.002.001")
+                return {'code': '300.002.001', 'message': 'Category not found'}
+            kwargs['category'] = category
+            book = BookService().create(**kwargs)
+            if not book:
+                self.mark_transaction_failed(
+                    transaction, message="Unable to create book record", response_code="300.003.003")
+                return {'code': '300.003.003', 'message': 'Unable to create book record'}
+            self.complete_transaction(transaction,response_code = '100.000.000' + 'Success',)
+            return {'code': '100.000.000', 'message': 'success'}
+        except Exception as e:
+            pass
 
     def get_book(self, request, book_id):
         """
