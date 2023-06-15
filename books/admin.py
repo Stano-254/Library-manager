@@ -9,8 +9,8 @@ class AuthorAdmin(admin.ModelAdmin):
     """
     Author admin site
     """
-    list_display = ('salutation', 'name', 'description', 'state', 'date_modified', 'date_created')
-    search_fields = ('name',)
+    list_display = ('salutation', 'first_name','last_name', 'description', 'state', 'date_modified', 'date_created')
+    search_fields = ('first_name','last_name')
     list_filter = ('state__name', 'date_created')
 
 

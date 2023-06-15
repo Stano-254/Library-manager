@@ -6,9 +6,12 @@ from members.models import Members
 # code 300.
 # Create your models here.
 # 001
-class Author(GenericBaseModel):
+class Author(BaseModel):
 
     salutation = models.CharField(choices=salutations(), max_length=5)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    description = models.TextField(max_length=255, blank=True, null=True)
     state = models.ForeignKey(State, default=State.default_state, on_delete=models.CASCADE)
 
     def __str__(self):

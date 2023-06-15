@@ -7,15 +7,35 @@ class BooksAdministration(TransactionLogBase):
     """
     handle the administration functionality relating to Books including CRUD
     """
+
     # Author CRUD
     def create_author(self, request, **kwargs):
         """
-        Add authors to the database
-        :param request:
-        :param kwargs:
-        :return:
+        Endpoint to Add authors to the database
+        :param request: Http request
+        :param kwargs:key-value arguments / parameters for creation of author
+        :return: dict with failed code or success
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('CreateAuthor', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Error with Author transaction'}
+            first_name = kwargs.pop("first_name")
+            last_name = kwargs.pop("last_name")
+            salutation = kwargs.get('salutation')
+            description = kwargs.get('description', None)
+            author = AuthorService().create(
+                first_name=first_name, last_name=last_name, salutation=salutation, description=description)
+            if not author:
+                self.mark_transaction_failed(transaction, message='Author not created', response_code='300.001.001')
+                return {'code': '300.001.001', 'message': 'Author not created'}
+            self.complete_transaction(transaction, message='Author created', response_code='100.000.000')
+            return {'code': '100.000.000', 'message': 'Success'}
+        except Exception as e:
+            self.mark_transaction_failed(
+                transaction, response=str(e), message='Error occurred in add Author', response_code='999.999.999')
+            return {'code': '999.999.999', 'message': 'Error occurred during author creation'}
 
     def get_author(self, request, **kwargs):
         """
@@ -111,7 +131,7 @@ class BooksAdministration(TransactionLogBase):
         try:
             transaction = self.log_transaction(transaction_type="CreateBook", request=request, user=request.user)
             if not transaction:
-                return {'code': '700.500.500', 'message': 'Transaction Failed'}
+                return {'code': '900.500.500', 'message': 'Transaction Failed'}
             author_id = kwargs.pop('author')
             category_id = kwargs.pop('category')
             author = AuthorService().get(id=author_id) if validate_uuid4(author_id) else AuthorService().filter(
