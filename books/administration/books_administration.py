@@ -37,16 +37,20 @@ class BooksAdministration(TransactionLogBase):
                 transaction, response=str(e), message='Error occurred in add Author', response_code='999.999.999')
             return {'code': '999.999.999', 'message': 'Error occurred during author creation'}
 
-    def get_author(self, request, **kwargs):
+    def get_author(self, request, author_id):
         """
         Get author from database
-        :param request:
-        :param kwargs:
-        :return:
+        :param request: HttpRequest
+        :param author_id: The unique identifier of an author
+        :return: dict with Author obj or error code
         """
-        pass
+        try:
+            auth= AuthorService().get(id=author_id)
+            return {'code':'100.000.000','data':auth}
+        except Exception as e:
+            return {'code':'999.999.999','message':'Unable to get author'}
 
-    def get_authors(self, request, **kwargs):
+    def get_authors(self, request, author_id):
         """
         Get authors from database
         :param request:
@@ -64,7 +68,7 @@ class BooksAdministration(TransactionLogBase):
         """
         pass
 
-    def delete_author(self, request, **kwargs):
+    def delete_author(self, request, author_id):
         """
         update author from database
         :param request:
