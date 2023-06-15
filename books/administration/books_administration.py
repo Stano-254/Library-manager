@@ -3,14 +3,18 @@ class BooksAdministration(object):
     handle the administration functionality relating to Books including CRUD
     """
 
-    def create_book(self, request, kwargs):
+    def create_book(self, request, **kwargs):
         """
           Handles adding of books in the library system
           :param request: the original request
           :param kwargs: keyword arguments for creation of book.
           :return: dict response with code 
           """
-        pass
+        author_id = kwargs.pop('author')
+        category_id = kwargs.pop('category')
+
+        print(kwargs)
+        return {'code': '100.000.000', 'message': 'success'}
 
     def get_book(self, request, book_id):
         """
@@ -61,4 +65,3 @@ class BooksAdministration(object):
         :return: dict response with code
         """
         pass
-
