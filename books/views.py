@@ -153,17 +153,17 @@ def delete_book(request):
 
 urlpatterns = [
     # author
-    re_path(r'^create_author',create_author)
-    re_path(r'^get_author',get_author)
-    re_path(r'^get_authors',get_authors)
-    re_path(r'^update_author',get_author)
-    re_path(r'^delete_author',delete_author)
+    re_path(r'^create_author',create_author),
+    re_path(r'^get_author',get_author),
+    re_path(r'^get_authors',get_authors),
+    re_path(r'^update_author',get_author),
+    re_path(r'^delete_author',delete_author),
     # category
-    re_path(r'^create_category', create_category)
-    re_path(r'^get_category', get_category)
-    re_path(r'^get_categories', get_categories)
-    re_path(r'^update_category', update_category)
-    re_path(r'^delete_catregory', delete_category)
+    re_path(r'^create_category', create_category),
+    re_path(r'^get_category', get_category),
+    re_path(r'^get_categories', get_categories),
+    re_path(r'^update_category', update_category),
+    re_path(r'^delete_catregory', delete_category),
     # books
     re_path(r'^create_book/$', create_book),
     re_path(r'^create_book/$', get_book),

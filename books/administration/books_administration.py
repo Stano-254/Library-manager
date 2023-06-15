@@ -98,11 +98,29 @@ class BooksAdministration(TransactionLogBase):
     def delete_author(self, request, author_id):
         """
         update author from database
-        :param request:
-        :param kwargs:
-        :return:
+        :param request:Http Request
+        :param author_id: the unique identifier of the author
+        :return: status code
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('DeleteAuthor',request=request,user=request.user)
+            if not transaction:
+                return {'code':'900.500.500','message':'Delete Author transaction failed'}
+            author = AuthorService().get(id=author_id)
+            if not author:
+                self.mark_transaction_failed(transaction,message='Author not found',repsonse_code='300.001.004')
+                return {'code':'300.001.004','message':'Author not found'}
+            update_author = AuthorService().update(author.id, state=StateService().get(name="Deleted"))
+            if not update_author:
+                self.mark_transaction_failed(transaction,message='Failed to mark author as deleted',response_code='300.001.003')
+                return {'code':'300.001.003','message':'Author not deleted'}
+            self.complete_transaction(transaction,message='Success',response_code='100.000.000')
+            return {'code':'100.000.000','message':'Success'}
+        except Exception as e:
+            self.mark_transaction_failed(
+                transaction,message='Error occured during delete author',response=str(e),response_code='999.999.999')
+            return {'code':'999.999.999','message':'Error occurred durinf deletion of author'}
 
     # Category CRUD
     def create_category(self, request, **kwargs):
