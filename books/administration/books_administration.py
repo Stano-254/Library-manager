@@ -45,19 +45,24 @@ class BooksAdministration(TransactionLogBase):
         :return: dict with Author obj or error code
         """
         try:
-            auth= AuthorService().get(id=author_id)
-            return {'code':'100.000.000','data':auth}
+            auth = AuthorService().get(id=author_id)
+            return {'code': '100.000.000', 'data': auth}
         except Exception as e:
-            return {'code':'999.999.999','message':'Unable to get author'}
+            return {'code': '999.999.999', 'message': 'Unable to get author'}
 
-    def get_authors(self, request, author_id):
+    def get_authors(self, request, **kwargs):
         """
         Get authors from database
         :param request:
         :param kwargs:
-        :return:
+        :return:list of all authors
         """
-        pass
+        try:
+            authors = AuthorService().filter().list
+            return {'code': '100.000.000', 'data': authors}
+        except Exceptiona as e:
+            lgr.exception(f"Error during fetch of authors {e}")
+            return {'code': '999.999.999', 'message': 'Error retrieving authos'}
 
     def update_author(self, request, **kwargs):
         """
