@@ -15,7 +15,7 @@ class Author(BaseModel):
     state = models.ForeignKey(State, default=State.default_state, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.salutation} {self.name}"
+        return f"{self.salutation} {self.first_name} {self.last_name}"
 
 #002
 class Category(GenericBaseModel):

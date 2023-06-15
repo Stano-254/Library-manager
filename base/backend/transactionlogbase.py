@@ -55,6 +55,7 @@ class TransactionLogBase(object):
                         kwargs['request'] = data
                 return TransactionService().create(transaction_type=transaction_type, **kwargs)
         except Exception as e:
+            print(f"error in logs {e}")
             lgr.exception('log_transaction Exception: %s', e)
         return None
 
