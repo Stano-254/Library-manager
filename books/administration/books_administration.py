@@ -6,8 +6,8 @@ from books.backend.service import AuthorService, CategoryService, BookService
 class BooksAdministration(TransactionLogBase):
     """
     handle the administration functionality relating to Books including CRUD
-    """
 
+    """
     def create_book(self, request, **kwargs):
         """
           Handles adding of books in the library system
@@ -15,6 +15,7 @@ class BooksAdministration(TransactionLogBase):
           :param kwargs: keyword arguments for creation of book.
           :return: dict response with code 
           """
+        transaction = None
         try:
             transaction = self.log_transaction(transaction_type="CreateBook", request=request, user=request.user)
             if not transaction:
@@ -39,10 +40,11 @@ class BooksAdministration(TransactionLogBase):
                 self.mark_transaction_failed(
                     transaction, message="Unable to create book record", response_code="300.003.003")
                 return {'code': '300.003.003', 'message': 'Unable to create book record'}
-            self.complete_transaction(transaction,response_code = '100.000.000' + 'Success',)
+            self.complete_transaction(transaction, response_code='100.000.000' + 'Success', )
             return {'code': '100.000.000', 'message': 'success'}
         except Exception as e:
-            pass
+            self.mark_transaction_failed(transaction, response=str(e), response_code="999.999.999")
+            return {'code': '999.999.999', 'message': 'Error Occurred during book creation'}
 
     def get_book(self, request, book_id):
         """
