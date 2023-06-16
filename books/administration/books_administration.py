@@ -384,7 +384,30 @@ class BooksAdministration(TransactionLogBase):
         :param book_id: the unique book identifier
         :return: dict response with code
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction("DeleteBook", request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Delete book transaction failed'}
+            if not validate_uuid4(book_id):
+                self.mark_transaction_failed(transaction, message="Invalid book identifier",
+                                             response_code='300.003.004')
+                return {'code': '300.003.004', 'message': 'Invalid book identifier'}
+            book = BookService().get(id=book_id)
+            if not book:
+                self.mark_transaction_failed(transaction, message='Book not found', response_code='300.003.002')
+                return {'code': '300.003.002', 'message': 'Book not found'}
+            updated_book = BookService().update(book.id, state=StateService().get(name='Deleted'))
+            if not updated_book:
+                self.mark_transaction_failed(transaction, message='Failed to delete book', response_code='300.003.003')
+                return {'code': '300.003.003', 'message': 'Failed to delete book'}
+            self.complete_transaction(transaction, message='Success')
+            return {'code': '100.000.000', 'message': 'Success'}
+        except Exception as e:
+            lgr.exception(f"Error during deletion of book : {e}")
+            self.mark_transaction_failed(transaction, message='Failed to delete the book', response=str(e))
+            return {'code': '999.999.999', 'message': 'Error Failed to delete book record'}
+            return {'code': '999.999.999', 'message': 'Error Failed to delete book record'}
 
     def archive_book(self, request, book_id):
         """
