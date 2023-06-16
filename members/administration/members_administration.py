@@ -71,7 +71,14 @@ class MembersAdministration(TransactionLogBase):
         :param kwargs: The parameters used to filter based on conditions if any.
         :return: dict response of a list of all user based on conditions provided
         """
-        pass
+        try:
+            members = MemberService().filter()
+            if not members:
+                return {'code': '200.001.002', 'message': 'Members not found'}
+            return {'code': '100.000.000', 'data': list(members.values())}
+        except Exception as e:
+            lgr.exception(f"Error occurred during fetch of members : {e}")
+            return {'code': '999.999.999', 'message': 'Error occurred during retrieval of members'}
 
     def update_member(self, request, member_id, **kwargs):
         """

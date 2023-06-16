@@ -29,7 +29,8 @@ def get_member(request):
 @csrf_exempt
 def get_members(request):
     try:
-        return JsonResponse(MembersAdministration().get_members(request))
+        kwargs = get_request_data(request)
+        return JsonResponse(MembersAdministration().get_members(request, **kwargs))
     except Exception as e:
         return JsonResponse({'code': '200.200.500', 'message': str(e)})
 
