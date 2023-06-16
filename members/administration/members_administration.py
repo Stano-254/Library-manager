@@ -1,7 +1,7 @@
 import logging
 
 from base.backend.transactionlogbase import TransactionLogBase
-from base.backend.utils.utilities import validate_name
+from base.backend.utils.utilities import validate_name, validate_uuid4
 from members.backend.service import MemberService
 from django.forms.models import model_to_dict
 
@@ -52,7 +52,16 @@ class MembersAdministration(TransactionLogBase):
         :param member_id: the unique identifier of the member
         :return: HttpResponse with member data
         """
-        pass
+        try:
+            if not validate_uuid4(member_id):
+                return {'code': '500.004.004', 'message': 'Invalid identifier'}
+            member = MemberService().get(id=member_id)
+            if not member:
+                return {'code': '200.002.002', 'message': 'Member record not found'}
+            return {'code': '100.000.000', 'data': model_to_dict(member)}
+        except Exception as e:
+            lgr.exception(f"Error retrieving member: {e}")
+            return {'code': '999.999.999', 'message': 'Error occurred during fetch member'}
 
     def get_members(self, request, **kwargs):
         """
