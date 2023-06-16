@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from uuid import UUID
 
 from django.http import QueryDict
@@ -54,3 +55,28 @@ def validate_uuid4(uuid_string):
     except Exception:
         return False
     return True
+
+
+def validate_name(name, min_length=2, max_length=50):
+    """
+    Checks if the provided name:
+        - contains only alphabet characters
+        - len(name) is within specified min_length and max_length
+    :param name: name passed to be validated
+    :type name: str
+    :param min_length: minimum length of name
+    :type min_length: int
+    :param max_length: maximum length of name
+    :type max_length: int
+    :return: True if valid else False
+    :rtype: bool
+    """
+    try:
+        name = str(name).strip()
+        if not re.match(r"(^[a-zA-Z\s]+$)", name):
+            return False
+        if min_length <= len(name) <= max_length:
+            return True
+    except Exception as e:
+        lgr.error('validate_name: %s', e)
+    return False

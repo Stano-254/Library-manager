@@ -6,7 +6,7 @@ from django.forms.models import model_to_dict
 
 from base.backend.service import StateService
 from base.backend.transactionlogbase import TransactionLogBase
-from base.backend.utils.utilities import validate_uuid4
+from base.backend.utils.utilities import validate_uuid4, validate_name
 from books.backend.service import AuthorService, CategoryService, BookService
 
 lgr = logging.getLogger(__name__)
@@ -103,7 +103,7 @@ class BooksAdministration(TransactionLogBase):
             resp = model_to_dict(update_author)
             resp['state'] = StateService().get(id=resp.pop('state')).name
             self.complete_transaction(transaction, response_code='100.000.000', message='Success')
-            return {'code': '100.000.000', 'message': 'Success','data':resp}
+            return {'code': '100.000.000', 'message': 'Success', 'data': resp}
         except Exception as e:
             lgr.exception(f"Error Failed to update author {e}")
             return {'code': '999.999.999', 'message': 'Error updating author'}
@@ -139,12 +139,33 @@ class BooksAdministration(TransactionLogBase):
     # Category CRUD
     def create_category(self, request, **kwargs):
         """
-        Add authors to the database
-        :param request:
-        :param kwargs:
-        :return:
+        Add category to the database
+        :param request: HttpRequest
+        :param kwargs:key-value arguments
+        :return: dict with response code for success or failure
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction("CreateCategory", request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Create category transaction failed'}
+            name = kwargs.pop('name')
+            if not validate_name(name):
+                self.mark_transaction_failed(transaction, message="Invalid name provide", response_code='500.400.001')
+                return {'code': '500.400.001', 'message': 'Invalid name provide'}
+            category = CategoryService().create(name=name, **kwargs)
+            if not category:
+                self.mark_transaction_failed(
+                    transaction, message='Failed to created category', response_code='300.002.002')
+                return {'code': '300.002.002', 'message': 'Failed to created category'}
+            self.complete_transaction(transaction, message='success')
+            return {'code': '100.000.000', 'message': 'Success', 'data': model_to_dict(category)}
+        except Exception as e:
+            lgr.exception(f"Error occurred during category creation: {e}")
+            self.mark_transaction_failed(
+                transaction, message='Error Occurred during create category',
+                response=str(e), response_code='999.999.999')
+            return {'code': '999.999.999', 'message': 'Error Occurred during create category'}
 
     def get_category(self, request, **kwargs):
         """
