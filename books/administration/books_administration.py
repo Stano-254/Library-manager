@@ -337,7 +337,7 @@ class BooksAdministration(TransactionLogBase):
             lgr.exception(f"Error occurred during fetch books : {e}")
             return {'code': '999.999.999', 'message': 'Error occurred during fetch books'}
 
-    def update_book(self, request, book_id, **kwargs):
+    def update_book(self, request, **kwargs):
         """
         Handles updating of books personal information or 
         any other information related to books

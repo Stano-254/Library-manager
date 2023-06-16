@@ -21,7 +21,8 @@ def create_member(request):
 @csrf_exempt
 def get_member(request):
     try:
-        return JsonResponse(MembersAdministration().get_member(request, member_id=get_request_data(request).pop('id')))
+        return JsonResponse(
+            MembersAdministration().get_member(request, member_id=get_request_data(request).pop('member_id')))
     except Exception as e:
         return JsonResponse({'code': '200.200.500', 'message': str(e)})
 
@@ -39,7 +40,7 @@ def get_members(request):
 def update_member(request):
     try:
         kwargs = get_request_data(request)
-        member_id = kwargs.pop('id')
+        member_id = kwargs.pop('member_id')
         return JsonResponse(MembersAdministration().update_member(request, member_id=member_id, **kwargs))
     except Exception as e:
         return JsonResponse({'code': '200.200.500', 'message': str(e)})
@@ -49,7 +50,7 @@ def update_member(request):
 def delete_member(request):
     try:
         return JsonResponse(
-            MembersAdministration().delete_member(request, member_id=get_request_data(request).pop('id')))
+            MembersAdministration().delete_member(request, member_id=get_request_data(request).pop('member_id')))
     except Exception as e:
         return JsonResponse({'code': '200.200.500', 'message': str(e)})
 
