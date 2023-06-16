@@ -124,7 +124,7 @@ def create_book(request):
 @csrf_exempt
 def get_book(request):
     try:
-        book_id = get_request_data(request).pop('book')
+        book_id = get_request_data(request).pop('book_id')
         return JsonResponse(BooksAdministration().get_book(request, book_id))
     except Exception as e:
         lgr.exception(f"Get book error {e}")
@@ -154,7 +154,7 @@ def update_book(request):
 @csrf_exempt
 def delete_book(request):
     try:
-        book_id = get_request_data(request).pop('book')
+        book_id = get_request_data(request).pop('book_id')
         return JsonResponse(BooksAdministration().delete_book(request, book_id))
     except Exception as e:
         lgr.exception(f"Delete book error {e}")
@@ -168,8 +168,7 @@ def archive_book(request):
     except Exception as e:
         lgr.exception(f"Delete book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
-
-
+z
 
 urlpatterns = [
     # author
