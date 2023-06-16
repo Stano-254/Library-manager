@@ -203,12 +203,35 @@ class BooksAdministration(TransactionLogBase):
 
     def update_category(self, request, **kwargs):
         """
-        update author from database
-        :param request:
-        :param kwargs:
-        :return:
+        update category from database
+        :param request:HttpRequest
+        :param kwargs: key-value parameters for updating category
+        :return:return updated data | failure code
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('UpdateCategory', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Updating category transaction failed'}
+            category_id = kwargs.pop('category_id')
+            if not validate_uuid4(category_id):
+                self.mark_transaction_failed(
+                    transaction, message='Invalid category identifier', response_code='500.400.004')
+                return {'code': '500.400.004', 'message': 'Invalid category identifier'}
+            category = CategoryService().get(id=category_id)
+            if not category:
+                self.mark_transaction_failed(transaction, message='Category not found', response_code='300.002.002')
+                return {'code': '300.002.002', 'message': 'Category not found'}
+            update_category = CategoryService().update(id=category.id, **kwargs)
+            if not update_category:
+                self.mark_transaction_failed(
+                    transaction, message='Failed to update category', response_code='300.002.003')
+                return {'code': '300.002.003', 'message': 'Failed to update category'}
+            self.complete_transaction(transaction, message='Success', response_code='100.000.00')
+            return {'code': '100.000.000', 'message': 'Success', 'data': model_to_dict(update_category)}
+        except Exception as e:
+            lgr.exception(f"Error during update category : {e}")
+            self.mark_transaction_failed(transaction, message="Error during update category", response=str(e))
 
     def delete_category(self, request, **kwargs):
         """
