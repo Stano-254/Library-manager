@@ -309,7 +309,14 @@ class BooksAdministration(TransactionLogBase):
         :param book_id: the unique identifier of the book
         :return: HttpResponse with book data
         """
-        pass
+        try:
+            if not validate_uuid4(book_id):
+                return {'code': '500.400.004', 'message': 'Invalid book identifier'}
+            book = BookService().get(id=book_id)
+            return {'code': '100.000.000', 'data': model_to_dict(book)}
+        except Exception as e:
+            lgr.exception(f"Error during fetch book : {e}")
+            return {'code': '999.999.999', 'message': 'Error during fetch book'}
 
     def get_books(self, request, **kwargs):
         """
