@@ -8,6 +8,7 @@ from books.administration.books_administration import BooksAdministration
 
 lgr = logging.getLogger(__name__)
 
+
 @csrf_exempt
 def create_author(request):
     try:
@@ -21,6 +22,7 @@ def create_author(request):
 @csrf_exempt
 def get_author(request):
     try:
+        print("well we fucked up")
         author_id = get_request_data(request).pop('author')
         return JsonResponse(BooksAdministration().get_author(request, author_id=author_id))
     except Exception as e:
@@ -29,8 +31,9 @@ def get_author(request):
 
 
 @csrf_exempt
-def get_authors(request):
+def get_all_authors(request):
     try:
+        print("ooh we are good")
         kwargs = get_request_data(request)
         return JsonResponse(BooksAdministration().get_authors(request, **kwargs))
     except Exception as e:
@@ -42,7 +45,7 @@ def get_authors(request):
 def update_author(request):
     try:
         kwargs = get_request_data(request)
-        return JsonResponse(BooksAdministration().get_authors(request, **kwargs))
+        return JsonResponse(BooksAdministration().update_author(request, **kwargs))
     except Exception as e:
         lgr.exception(f"update author error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during update author"})
@@ -51,7 +54,7 @@ def update_author(request):
 @csrf_exempt
 def delete_author(request):
     try:
-        author_id = get_request_data(request).pop('author')
+        author_id = get_request_data(request).pop('author_id')
         return JsonResponse(BooksAdministration().delete_author(request, author_id=author_id))
     except Exception as e:
         lgr.exception(f"Delete author error {e}")
@@ -77,6 +80,7 @@ def get_category(request):
         lgr.exception(f"Get category error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during get category"})
 
+
 @csrf_exempt
 def get_categories(request):
     try:
@@ -86,6 +90,7 @@ def get_categories(request):
         lgr.exception(f"Get categories error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during fetch categories"})
 
+
 @csrf_exempt
 def update_category(request):
     try:
@@ -94,6 +99,7 @@ def update_category(request):
     except Exception as e:
         lgr.exception(f"Update category error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during updating category"})
+
 
 @csrf_exempt
 def delete_category(request):
@@ -114,6 +120,7 @@ def create_book(request):
         lgr.exception(f"Create book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during book creation"})
 
+
 @csrf_exempt
 def get_book(request):
     try:
@@ -122,6 +129,7 @@ def get_book(request):
     except Exception as e:
         lgr.exception(f"Get book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during get book"})
+
 
 @csrf_exempt
 def get_books(request):
@@ -132,6 +140,7 @@ def get_books(request):
         lgr.exception(f"Get books error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during fetch books"})
 
+
 @csrf_exempt
 def update_book(request):
     try:
@@ -140,6 +149,7 @@ def update_book(request):
     except Exception as e:
         lgr.exception(f"Update book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during update book"})
+
 
 @csrf_exempt
 def delete_book(request):
@@ -153,11 +163,11 @@ def delete_book(request):
 
 urlpatterns = [
     # author
-    re_path(r'^create_author',create_author),
-    re_path(r'^get_author',get_author),
-    re_path(r'^get_authors',get_authors),
-    re_path(r'^update_author',get_author),
-    re_path(r'^delete_author',delete_author),
+    re_path(r'^create_author', create_author),
+    re_path(r'^get_author', get_author),
+    re_path(r'^fetch_authors', get_all_authors),
+    re_path(r'^update_author', update_author),
+    re_path(r'^delete_author', delete_author),
     # category
     re_path(r'^create_category', create_category),
     re_path(r'^get_category', get_category),

@@ -1,6 +1,15 @@
+import json
+import logging
+
+from django.core import serializers
+from django.forms.models import model_to_dict
+
+from base.backend.service import StateService
 from base.backend.transactionlogbase import TransactionLogBase
 from base.backend.utils.utilities import validate_uuid4
 from books.backend.service import AuthorService, CategoryService, BookService
+
+lgr = logging.getLogger(__name__)
 
 
 class BooksAdministration(TransactionLogBase):
@@ -31,7 +40,8 @@ class BooksAdministration(TransactionLogBase):
                 self.mark_transaction_failed(transaction, message='Author not created', response_code='300.001.001')
                 return {'code': '300.001.001', 'message': 'Author not created'}
             self.complete_transaction(transaction, message='Author created', response_code='100.000.000')
-            return {'code': '100.000.000', 'message': 'Success'}
+            resp = json.loads(serializers.serialize('json', [author, ]))[0].get('pk')
+            return {'code': '100.000.000', 'message': 'Success', 'data': resp}
         except Exception as e:
             self.mark_transaction_failed(
                 transaction, response=str(e), message='Error occurred in add Author', response_code='999.999.999')
@@ -45,9 +55,10 @@ class BooksAdministration(TransactionLogBase):
         :return: dict with Author obj or error code
         """
         try:
-            auth = AuthorService().get(id=author_id)
+            auth = model_to_dict(AuthorService().get(pk=author_id))
             return {'code': '100.000.000', 'data': auth}
         except Exception as e:
+            print(e)
             return {'code': '999.999.999', 'message': 'Unable to get author'}
 
     def get_authors(self, request, **kwargs):
@@ -58,9 +69,9 @@ class BooksAdministration(TransactionLogBase):
         :return:list of all authors
         """
         try:
-            authors = AuthorService().filter().list
+            authors = list(AuthorService().filter().values())
             return {'code': '100.000.000', 'data': authors}
-        except Exceptiona as e:
+        except Exception as e:
             lgr.exception(f"Error during fetch of authors {e}")
             return {'code': '999.999.999', 'message': 'Error retrieving authos'}
 
@@ -73,27 +84,29 @@ class BooksAdministration(TransactionLogBase):
         """
         transaction = None
         try:
-            transaction = self.log_transaction('UpdateAuthor',request=request, user=request.user)
+            transaction = self.log_transaction('UpdateAuthor', request=request, user=request.user)
             if not transaction:
-                return {'code':'900.500.500','message':'Update author transaction failed'}
+                return {'code': '900.500.500', 'message': 'Update author transaction failed'}
             author_id = kwargs.pop('author_id')
-            if not validate_uuid4(author_id):
-                self.mark_transaction_failed(transaction,message="Invalid author identifier",response_code="300.001.004")
-                return {'code':'300.001.004','message':'Invalid author identifier'}
+            if not validate_uuid4(str(author_id)):
+                self.mark_transaction_failed(
+                    transaction, message="Invalid author identifier", response_code="300.001.004")
+                return {'code': '300.001.004', 'message': 'Invalid author identifier'}
             author = AuthorService().get(id=author_id)
             if not author:
-                self.mark_transaction_failed(transaction,message="Author not found",reponse_code='300.001.404')
-                return {'code':'300.001.404','message':'Author not found'}
-            update_author = AuthorService().update(author.id,**kwargs)
+                self.mark_transaction_failed(transaction, message="Author not found", reponse_code='300.001.404')
+                return {'code': '300.001.404', 'message': 'Author not found'}
+            update_author = AuthorService().update(author.id, **kwargs)
             if not update_author:
-                self.mark_transaction_failed(transaction,message='Author not update',response_code='300.001.002')
-                return {'code':'300.001.002','message':'Author update failed'}
-            self.complete_transaction(transaction,response_code='100.000.000',message='Success')
-            return {'code':'100.000.000','message':'Success'}
+                self.mark_transaction_failed(transaction, message='Author not update', response_code='300.001.002')
+                return {'code': '300.001.002', 'message': 'Author update failed'}
+            resp = model_to_dict(update_author)
+            resp['state'] = StateService().get(id=resp.pop('state')).name
+            self.complete_transaction(transaction, response_code='100.000.000', message='Success')
+            return {'code': '100.000.000', 'message': 'Success','data':resp}
         except Exception as e:
             lgr.exception(f"Error Failed to update author {e}")
-            return {'code':'999.999.999','message':'Error updating author'}
-
+            return {'code': '999.999.999', 'message': 'Error updating author'}
 
     def delete_author(self, request, author_id):
         """
@@ -104,23 +117,24 @@ class BooksAdministration(TransactionLogBase):
         """
         transaction = None
         try:
-            transaction = self.log_transaction('DeleteAuthor',request=request,user=request.user)
+            transaction = self.log_transaction('DeleteAuthor', request=request, user=request.user)
             if not transaction:
-                return {'code':'900.500.500','message':'Delete Author transaction failed'}
+                return {'code': '900.500.500', 'message': 'Delete Author transaction failed'}
             author = AuthorService().get(id=author_id)
             if not author:
-                self.mark_transaction_failed(transaction,message='Author not found',repsonse_code='300.001.004')
-                return {'code':'300.001.004','message':'Author not found'}
+                self.mark_transaction_failed(transaction, message='Author not found', repsonse_code='300.001.004')
+                return {'code': '300.001.004', 'message': 'Author not found'}
             update_author = AuthorService().update(author.id, state=StateService().get(name="Deleted"))
             if not update_author:
-                self.mark_transaction_failed(transaction,message='Failed to mark author as deleted',response_code='300.001.003')
-                return {'code':'300.001.003','message':'Author not deleted'}
-            self.complete_transaction(transaction,message='Success',response_code='100.000.000')
-            return {'code':'100.000.000','message':'Success'}
+                self.mark_transaction_failed(
+                    transaction, message='Failed to mark author as deleted', response_code='300.001.003')
+                return {'code': '300.001.003', 'message': 'Author not deleted'}
+            self.complete_transaction(transaction, message='Success', response_code='100.000.000')
+            return {'code': '100.000.000', 'message': 'Success'}
         except Exception as e:
             self.mark_transaction_failed(
-                transaction,message='Error occured during delete author',response=str(e),response_code='999.999.999')
-            return {'code':'999.999.999','message':'Error occurred durinf deletion of author'}
+                transaction, message='Error occured during delete author', response=str(e), response_code='999.999.999')
+            return {'code': '999.999.999', 'message': 'Error occurred durinf deletion of author'}
 
     # Category CRUD
     def create_category(self, request, **kwargs):
