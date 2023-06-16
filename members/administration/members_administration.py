@@ -80,17 +80,40 @@ class MembersAdministration(TransactionLogBase):
             lgr.exception(f"Error occurred during fetch of members : {e}")
             return {'code': '999.999.999', 'message': 'Error occurred during retrieval of members'}
 
-    def update_member(self, request, member_id, **kwargs):
+    def update_member(self, request, **kwargs):
         """
         Handles updating of members personal information or
         any other information related to members
         :param request: Original Django HTTP request
         :type request: WSGIRequest
-        :param member_id:
         :param kwargs: dict of other parameters
         :return: dict response
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('UpdateMember', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Update member transaction failed'}
+            member_id = kwargs.pop('member_id')
+            if not validate_uuid4(member_id):
+                self.mark_transaction_failed(
+                    transaction, message='Invalid member identifier', response_code='500.400.004')
+                return {'code': '500.400.004', 'message': 'Invalid member identifier'}
+            member = MemberService().get(id=member_id)
+            if not member:
+                self.mark_transaction_failed(transaction, message='Member not found', response_code='200.001.002')
+                return {'code': '200.001.002', 'message': 'Member not found'}
+            updated_member = MemberService().update(member.id, **kwargs)
+            if not updated_member:
+                self.mark_transaction_failed(
+                    transaction, message='Member details not update', response_code='200.001.003')
+                return {'code': '200.001.003', 'message': 'Member details not updated'}
+            self.complete_transaction(transaction, message='Success')
+            return {'code': '100.000.000', 'message': 'success', 'data': model_to_dict(updated_member)}
+        except Exception as e:
+            lgr.exception(f"Error occurred during updating member details")
+            self.mark_transaction_failed(transaction, response=str(e))
+            return {'code': '999.999.999', 'message': 'Error updating member details'}
 
     def delete_member(self, request, member_id):
         """
