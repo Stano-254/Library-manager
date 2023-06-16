@@ -1,5 +1,6 @@
 import logging
 
+from base.backend.service import StateService
 from base.backend.transactionlogbase import TransactionLogBase
 from base.backend.utils.utilities import validate_name, validate_uuid4
 from members.backend.service import MemberService
@@ -123,4 +124,26 @@ class MembersAdministration(TransactionLogBase):
         :param member_id: the unique member identifier
         :return: dict response with code
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('DeleteMember', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Delete member transaction failed'}
+            if not validate_uuid4(member_id):
+                self.mark_transaction_failed(
+                    transaction, message='Invalid member identifier', response_code='500.400.004')
+                return {'code': '500.400.004', 'message': 'Invalid member identifier'}
+            member = MemberService().get(id=member_id)
+            if not member:
+                self.mark_transaction_failed(transaction, message='Member not found', response_code='200.001.002')
+                return {'code': '200.001.002', 'message': 'Member not found'}
+            delete_member = MemberService().update(member.id, state=StateService().get(name='Deleted'))
+            if not delete_member:
+                self.mark_transaction_failed(transaction, message='Member not deleted', response_code='200.001.003')
+                return {'code': '200.001.003', 'message': 'Member not deleted'}
+            self.complete_transaction(transaction, message='Success')
+            return {'code': '100.000.000', 'message': 'Success'}
+        except Exception as e:
+            lgr.exception(f"Error deleting member details : {e}")
+            self.mark_transaction_failed(transaction, message='Error deleting member details', response=str(e))
+            return {'code': '999.999.999', 'message': 'Error deleting member details'}
