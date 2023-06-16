@@ -347,7 +347,34 @@ class BooksAdministration(TransactionLogBase):
         :param kwargs: dict of other parameters 
         :return: dict response
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('UpdateBook', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Update book transaction failed'}
+            book_id = kwargs.pop('book_id')
+            if not validate_uuid4(book_id):
+                self.mark_transaction_failed(
+                    transaction, message='Invalid book identifier', response_code='300.003.004')
+                return {'code': '300.003.004', 'message': 'Invalid book identifier'}
+            book = BookService().get(id=book_id)
+            if not book:
+                self.mark_transaction_failed(transaction, message="Book not found", response_code='300.003.002')
+                return {'code': '300.003.002', 'message': 'Book not found'}
+            update_book = BookService().update(book.id, **kwargs)
+            if not update_book:
+                self.mark_transaction_failed(
+                    transaction, message='Failed to update the book record', response_code='300.003.003')
+                return {'code': '300.003.003', 'message': 'Failed to update the book record'}
+
+            self.complete_transaction(transaction, message='100.000.000', response_code='100.000.000')
+            return {'code': '100.00.000', 'message': 'Success', 'data': model_to_dict(update_book)}
+        except Exception as e:
+            lgr.exception(f"Error occurred in update book : {e}")
+            self.mark_transaction_failed(
+                transaction, message="Error Occurred during update book record",
+                response=str(e), response_code='999.999.999')
+            return {'code': '999.999.999', 'message': 'Error occurred during update book'}
 
     def delete_book(self, request, book_id):
         """
