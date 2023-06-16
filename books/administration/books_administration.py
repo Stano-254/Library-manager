@@ -313,6 +313,8 @@ class BooksAdministration(TransactionLogBase):
             if not validate_uuid4(book_id):
                 return {'code': '500.400.004', 'message': 'Invalid book identifier'}
             book = BookService().get(id=book_id)
+            if not book:
+                return {'code': '300.003.002', 'message': 'No book record found'}
             return {'code': '100.000.000', 'data': model_to_dict(book)}
         except Exception as e:
             lgr.exception(f"Error during fetch book : {e}")
@@ -326,7 +328,14 @@ class BooksAdministration(TransactionLogBase):
         :param kwargs: The parameters used to filter based on conditions if any.
         :return: dict response of a list of all books based on conditions provided
         """
-        pass
+        try:
+            books = BookService().filter().values()
+            if not books:
+                return {'code': '300.003.002', 'message': 'No book records found'}
+            return {'code': '100.000.000', 'data': list(books)}
+        except Exception as e:
+            lgr.exception(f"Error occurred during fetch books : {e}")
+            return {'code': '999.999.999', 'message': 'Error occurred during fetch books'}
 
     def update_book(self, request, book_id, **kwargs):
         """
