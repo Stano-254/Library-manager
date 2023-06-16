@@ -173,11 +173,11 @@ urlpatterns = [
     re_path(r'^get_category', get_category),
     re_path(r'^get_categories', get_categories),
     re_path(r'^update_category', update_category),
-    re_path(r'^delete_catregory', delete_category),
+    re_path(r'^delete_category', delete_category),
     # books
     re_path(r'^create_book/$', create_book),
-    re_path(r'^create_book/$', get_book),
-    re_path(r'^create_book/$', get_books),
-    re_path(r'^create_book/$', update_book),
-    re_path(r'^create_book/$', delete_book),
+    re_path(r'^get_book/$', get_book),
+    re_path(r'^get_books/$', get_books),
+    re_path(r'^update_book/$', update_book),
+    re_path(r'^delete_book/$', delete_book),
 ]

@@ -23,7 +23,8 @@ class TestBooksModels(object):
         author = mixer.blend(
             'books.Author', salutation='Mr.', name="John Sakaja", state=mixer.blend('base.State', name="Active"))
         assert author is not None, 'Should return  Author instance'
-        assert author.__str__() == f"{author.salutation} {author.name}", 'Should be Author string object representation'
+        assert author.__str__() == f"{author.salutation} {author.first_name} {author.last_name}", \
+            'Should be Author string object representation'
 
     def test_category(self):
         """ Test for category model"""

@@ -14,8 +14,8 @@ class TestAuthorService(object):
 
     def test_get(self):
         mixer.blend('base.State', name="Active")
-        mixer.blend('books.Author', name="John Kayumba")
-        author = AuthorService().get(name='John Kayumba')
+        mixer.blend('books.Author', first_name="John", last_name="Kayumba")
+        author = AuthorService().get(first_name='John')
         assert author is not None, 'Should have a Author object'
 
     def test_filter(self):
@@ -30,9 +30,10 @@ class TestAuthorService(object):
         """ Test for create Author Model service """
         mixer.blend('base.State', name="Active")
         kwargs = {
-            'name': "John Sakaja",
+            'first_name': "John",
+            'last_name':"Sakaja",
             'description': 'the renowned writter of playbook',
-            'salutation': 'Female',
+            'salutation': 'Mrs',
             'state': mixer.blend('base.State', name='Active')
 
         }
