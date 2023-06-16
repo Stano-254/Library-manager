@@ -160,6 +160,16 @@ def delete_book(request):
         lgr.exception(f"Delete book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
 
+@csrf_exempt
+def archive_book(request):
+    try:
+        book_id = get_request_data(request).pop('book_id')
+        return JsonResponse(BooksAdministration().archive_book(request, book_id))
+    except Exception as e:
+        lgr.exception(f"Delete book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
+
+
 
 urlpatterns = [
     # author
@@ -180,4 +190,5 @@ urlpatterns = [
     re_path(r'^get_books/$', get_books),
     re_path(r'^update_book/$', update_book),
     re_path(r'^delete_book/$', delete_book),
+    re_path(r'^archive_book/$', archive_book),
 ]
