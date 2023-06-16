@@ -168,7 +168,6 @@ def archive_book(request):
     except Exception as e:
         lgr.exception(f"Delete book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
-z
 
 urlpatterns = [
     # author
