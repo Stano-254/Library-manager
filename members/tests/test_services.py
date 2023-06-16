@@ -43,6 +43,6 @@ class TestMemberService(object):
 
     def test_update(self):
         mixer.blend('base.State', name="Active")
-        old_member = mixer.blend('members.Members', first_name="John", last_name="Kamau", membership_no='2345')
-        updated_member = MemberService().update(old_member.id, membership_no='345678')
-        assert updated_member.membership_no == '345678', 'Should have an updated instance of Member'
+        old_member = mixer.blend('members.Members', first_name="John", last_name="Kamau")
+        updated_member = MemberService().update(old_member.id, mobile_no='2547045345678')
+        assert updated_member.mobile_no == '2547045345678', 'Should have an updated instance of Member'
