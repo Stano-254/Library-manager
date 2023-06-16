@@ -233,14 +233,35 @@ class BooksAdministration(TransactionLogBase):
             lgr.exception(f"Error during update category : {e}")
             self.mark_transaction_failed(transaction, message="Error during update category", response=str(e))
 
-    def delete_category(self, request, **kwargs):
+    def delete_category(self, request, category_id):
         """
-        update author from database
-        :param request:
-        :param kwargs:
-        :return:
+        Delete Category from database
+        :param request:HttpRequest
+        :param category_id:
+        :return: Success code | failure code
         """
-        pass
+        transaction = None
+        try:
+            transaction = self.log_transaction('DeleteCategory', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Delete category transaction failed'}
+            if not validate_uuid4(category_id):
+                self.mark_transaction_failed(
+                    transaction, message="Invalid category identifier", response_code='500.400.004')
+                return {'code': '500.400.004', 'message': 'Invalid category identifier'}
+            category = CategoryService().get(id=category_id)
+            if not category:
+                self.mark_transaction_failed(transaction, message='Category not found', response_code='300.002.002')
+                return {'code': '300.002.002', 'message': 'Category not found'}
+            update_category = CategoryService().update(category.id, state=StateService().get(name='Deleted'))
+            if not update_category:
+                self.mark_transaction_failed(
+                    transaction, message='Failed to delete category', response_code='300.002.003')
+                return {'code': '300.002.003', 'message': 'Error occurred during delete category'}
+        except Exception as e:
+            lgr.exception(f"Error during delete category: {e}")
+            self.mark_transaction_failed(transaction, message="Error Deleting Category", response=str(e))
+            return {'code': '999.999.999', 'message': 'Error occurred during deletion of category'}
 
     # Book CRUD
     def create_book(self, request, **kwargs):
