@@ -187,12 +187,19 @@ class BooksAdministration(TransactionLogBase):
 
     def get_categories(self, request, **kwargs):
         """
-        Get authors from database
-        :param request:
+        Get categories from database
+        :param request:HttpRequest
         :param kwargs:
-        :return:
+        :return: return queryset | []
         """
-        pass
+        try:
+            categories = CategoryService().filter().values()
+            if not categories:
+                return {'code': '300.002.003', 'message': 'No categories found'}
+            return {'code': '100.000.000', 'data': list(categories)}
+        except Exception as e:
+            lgr.exception(f"Failed to fetch categories with the following error : {e}")
+            return {'code': '999.999.999', 'message': 'Unable to retrieve records'}
 
     def update_category(self, request, **kwargs):
         """
