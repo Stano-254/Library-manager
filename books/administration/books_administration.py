@@ -167,14 +167,23 @@ class BooksAdministration(TransactionLogBase):
                 response=str(e), response_code='999.999.999')
             return {'code': '999.999.999', 'message': 'Error Occurred during create category'}
 
-    def get_category(self, request, **kwargs):
+    def get_category(self, request, category_id):
         """
         Get author from database
-        :param request:
-        :param kwargs:
-        :return:
+        :param request: HttpRequest
+        :param category_id: the unique identifier for category
+        :return: return dict of the data | None
         """
-        pass
+        try:
+            if not validate_uuid4(category_id):
+                return {'code': '500.400.004', 'message': 'Invalid category identifier'}
+            category = CategoryService().get(id=category_id)
+            if not category:
+                return {'code': '300.002.003', 'message': 'Category not found'}
+            return {'code': '100.000.000', 'data': model_to_dict(category)}
+        except Exception as e:
+            lgr.exception(f"Failed to fetch category with Error : {e}")
+            return {'code': '999.999.999', 'message': 'An error occurred during get category'}
 
     def get_categories(self, request, **kwargs):
         """
