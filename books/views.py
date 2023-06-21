@@ -169,6 +169,26 @@ def archive_book(request):
         lgr.exception(f"Delete book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
 
+@csrf_exempt
+def borrow_book(request):
+    try:
+        book_id = get_request_data(request).pop('book_id')
+        member_id = get_request_data(request).pop('member_id')
+        return JsonResponse(BooksAdministration().borrow_book(request, book_id, member_id))
+    except Exception as e:
+        lgr.exception(f"Borrow book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during borrow book"})
+
+@csrf_exempt
+def return_book(request):
+    try:
+        book_id = get_request_data(request).pop('book_id')
+        member_id = get_request_data(request).pop('member_id')
+        return JsonResponse(BooksAdministration().return_book(request, book_id, member_id))
+    except Exception as e:
+        lgr.exception(f"Return book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+
 urlpatterns = [
     # author
     re_path(r'^create_author', create_author),
@@ -189,4 +209,8 @@ urlpatterns = [
     re_path(r'^update_book/$', update_book),
     re_path(r'^delete_book/$', delete_book),
     re_path(r'^archive_book/$', archive_book),
+
+    # logic for borrow book and return book
+    re_path(r'^borrow_book/$', borrow_book),
+    re_path(r'^return_book/$', return_book),
 ]

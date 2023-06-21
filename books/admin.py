@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from books.models import Author, Category, Books, BookIssued
+from books.models import Author, Category, Books, BookIssued, BookFees
 
 
 # Register your models here.
@@ -45,3 +45,10 @@ class BookIssuedAdmin(admin.ModelAdmin):
         'book', 'member', 'issued_date', 'borrow_duration', 'return_date', 'return_fee', 'fee_paid', 'returned')
     search_fields = ('book__author', 'book__title', 'member__membership_no')
     list_filter = ('book__author', 'issued_date')
+@admin.register(BookFees)
+class BookFeesAdmin(admin.ModelAdmin):
+    """
+    Books admin site
+    """
+    list_display = ('borrow_fee', 'late_return_rate', 'max_borrow_fee_limit')
+    search_fields = ('borrow_fee', 'late_return_rate', 'max_borrow_fee_limit')

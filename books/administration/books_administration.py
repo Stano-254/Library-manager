@@ -7,7 +7,8 @@ from django.forms.models import model_to_dict
 from base.backend.service import StateService
 from base.backend.transactionlogbase import TransactionLogBase
 from base.backend.utils.utilities import validate_uuid4, validate_name
-from books.backend.service import AuthorService, CategoryService, BookService
+from books.backend.service import AuthorService, CategoryService, BookService, BookIssuedService, BookFeesService
+from members.backend.service import MemberService
 
 lgr = logging.getLogger(__name__)
 
@@ -438,3 +439,118 @@ class BooksAdministration(TransactionLogBase):
             lgr.exception(f"Error during archiving of book : {e}")
             self.mark_transaction_failed(transaction, message='Failed to archive the book', response=str(e))
             return {'code': '999.999.999', 'message': 'Error Failed to archive book record'}
+
+    def borrow_book(self, request, book_id, member_id, **kwargs):
+        """
+        Handles borrowing of a book from the system, i.e. then reduce the number of available books
+        :param member_id: the unique member identifier
+        :param request: Original Django HTTP request
+        :param book_id: the unique book identifier
+        :return: dict response with code
+        """
+        transaction = None
+        try:
+            transaction = self.log_transaction('BorrowBook', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Borrow book transaction failed'}
+            borrow_duration = kwargs.get('borrow_duration', 7)
+            if not validate_uuid4(book_id):
+                self.mark_transaction_failed(
+                    transaction, message="Invalid book identifier", response_code='300.003.004')
+                return {'code': '300.003.004', 'message': 'Invalid book identifier'}
+            book = BookService().get(id=book_id)
+            if not book:
+                self.mark_transaction_failed(transaction, message='Book not found', response_code='300.003.002')
+                return {'code': '300.003.002', 'message': 'Book not found'}
+            if not validate_uuid4(member_id):
+                self.mark_transaction_failed(
+                    transaction, message="Invalid member identifier", response_code='300.003.004')
+                return {'code': '300.003.004', 'message': 'Invalid member identifier'}
+            member = MemberService().get(id=member_id)
+            if not member:
+                self.mark_transaction_failed(transaction, message='Member not found', response_code='200.001.002')
+                return {'code': '200.001.002', 'message': 'Member not found'}
+            # check if the number of remaining books is greater than the number of reserve books
+            if book.no_of_books <= book.no_of_reserve_books:
+                self.mark_transaction_failed(
+                    transaction, message="Book not available for borrowing", response_code='300.003.005')
+                return {'code': '300.003.005', 'message': 'Book not available for borrowing'}
+            # check if the member is eligible to borrow a book
+            total_pending_fee = 0
+            if BookIssuedService().filter(member=member):
+                total_pending_fee = BookIssuedService().filter(member=member).first().total_pending_fee
+            book_fee = BookFeesService().filter().first()
+            if not book_fee:
+                self.mark_transaction_failed(transaction, message='Failed to get book fees', response_code='300.004.002')
+                return {'code': '300.004.002', 'message': 'Failed to get book fees'}
+            if total_pending_fee >= book_fee.max_borrow_fee_limit:
+                self.mark_transaction_failed(
+                    transaction, message='Member not eligible to borrow book due to uncleared fees',
+                    response_code='200.001.007')
+                return {'code': '200.001.007', 'message': 'Member not eligible to borrow book due to uncleared fees'}
+            updated_book = BookService().update(book.id, no_of_books=book.no_of_books - 1)
+            if not updated_book:
+                self.mark_transaction_failed(transaction, message='Failed to borrow book', response_code='300.003.006')
+                return {'code': '300.003.006', 'message': 'Failed to borrow book'}
+            book_issued = BookIssuedService().create(
+                book=book, member=member, borrow_duration=borrow_duration,
+                total_pending_fee=total_pending_fee + book_fee.borrow_fee, return_fee=book_fee.borrow_fee)
+            if not book_issued:
+                self.mark_transaction_failed(transaction, message='Failed to issued book ', response_code='300.003.003')
+                return {'code': '300.003.003', 'message': 'Failed to issued book'}
+            self.complete_transaction(transaction, message='Success')
+            return {'code': '100.000.000', 'message': 'Success'}
+        except Exception as e:
+            lgr.exception(f"Error during borrowing of book : {e}")
+            self.mark_transaction_failed(transaction, message='Failed to borrower the book', response=str(e))
+            return {'code': '999.999.999', 'message': 'Error Failed to borrower book record'}
+
+    def return_book(self, request, book_id, member_id):
+        """
+        Handles archiving  of a book from the system, i.e. updated to state archived
+        :param member_id: the unique member identifier
+        :param request: Original Django HTTP request
+        :param book_id: the unique book identifier
+        :return: dict response with code
+        """
+        transaction = None
+        try:
+            transaction = self.log_transaction('ReturnBook', request=request, user=request.user)
+            if not transaction:
+                return {'code': '900.500.500', 'message': 'Return book transaction failed'}
+            if not validate_uuid4(book_id):
+                self.mark_transaction_failed(
+                    transaction, message="Invalid book identifier", response_code='300.003.004')
+                return {'code': '300.003.004', 'message': 'Invalid book identifier'}
+            book = BookService().get(id=book_id)
+            if not book:
+                self.mark_transaction_failed(transaction, message='Book not found', response_code='300.003.002')
+                return {'code': '300.003.002', 'message': 'Book not found'}
+            if not validate_uuid4(member_id):
+                self.mark_transaction_failed(
+                    transaction, message="Invalid member identifier", response_code='300.003.004')
+                return {'code': '300.003.004', 'message': 'Invalid member identifier'}
+            member = MemberService().get(id=member_id)
+            if not member:
+                self.mark_transaction_failed(transaction, message='Member not found', response_code='200.001.002')
+                return {'code': '200.001.002', 'message': 'Member not found'}
+            updated_book = BookService().update(book.id, no_of_books=book.no_of_books + 1)
+            if not updated_book:
+                self.mark_transaction_failed(transaction, message='Failed to archive book', response_code='300.003.003')
+                return {'code': '300.003.003', 'message': 'Failed to archive book'}
+            book_issued = BookIssuedService().filter(book=book, member=member, returned=False).first()
+            if not book_issued:
+                self.mark_transaction_failed(transaction, message='Failed to issued book ', response_code='300.003.003')
+                return {'code': '300.003.003', 'message': 'Failed to issued book'}
+            update_issued = BookIssuedService().update(
+                book_issued.id, total_pending_fee=book_issued.total_pending_fee - book_issued.return_fee,
+                fee_paid=True, returned=True)
+            if not update_issued:
+                self.mark_transaction_failed(transaction, message='Failed to return book ', response_code='300.003.008')
+                return {'code': '300.003.008', 'message': 'Failed to return book'}
+            self.complete_transaction(transaction, message='Success')
+            return {'code': '100.000.000', 'message': 'Success'}
+        except Exception as e:
+            lgr.exception(f"Error during return book : {e}")
+            self.mark_transaction_failed(transaction, message='Failed to return book', response=str(e))
+            return {'code': '999.999.999', 'message': 'Error Failed to return book record'}
