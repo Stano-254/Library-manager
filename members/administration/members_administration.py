@@ -1,5 +1,7 @@
 import logging
 
+from django.db.models import F
+
 from base.backend.service import StateService
 from base.backend.transactionlogbase import TransactionLogBase
 from base.backend.utils.utilities import validate_name, validate_uuid4
@@ -56,10 +58,10 @@ class MembersAdministration(TransactionLogBase):
         try:
             if not validate_uuid4(member_id):
                 return {'code': '500.004.004', 'message': 'Invalid identifier'}
-            member = MemberService().get(id=member_id)
+            member = MemberService().filter(id=member_id).annotate(state_name=F('state__name')).values().first()
             if not member:
                 return {'code': '200.002.002', 'message': 'Member record not found'}
-            return {'code': '100.000.000', 'data': model_to_dict(member)}
+            return {'code': '100.000.000', 'data': member}
         except Exception as e:
             lgr.exception(f"Error retrieving member: {e}")
             return {'code': '999.999.999', 'message': 'Error occurred during fetch member'}
@@ -73,10 +75,12 @@ class MembersAdministration(TransactionLogBase):
         :return: dict response of a list of all user based on conditions provided
         """
         try:
-            members = MemberService().filter()
+            members = MemberService().filter().annotate(
+                state_name=F('state__name')).values(
+                'id', 'first_name', 'last_name', 'national_id', 'mobile_no', 'gender', 'membership_no', 'state_name')
             if not members:
                 return {'code': '200.001.002', 'message': 'Members not found'}
-            return {'code': '100.000.000', 'data': list(members.values())}
+            return {'code': '100.000.000', 'data': list(members)}
         except Exception as e:
             lgr.exception(f"Error occurred during fetch of members : {e}")
             return {'code': '999.999.999', 'message': 'Error occurred during retrieval of members'}

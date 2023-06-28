@@ -2,6 +2,7 @@ import json
 import logging
 
 from django.core import serializers
+from django.db.models import F
 from django.forms.models import model_to_dict
 
 from base.backend.service import StateService
@@ -56,7 +57,7 @@ class BooksAdministration(TransactionLogBase):
         :return: dict with Author obj or error code
         """
         try:
-            auth = model_to_dict(AuthorService().get(pk=author_id))
+            auth = AuthorService().filter(pk=author_id).annotate(state_name=F('state__name')).values().first()
             return {'code': '100.000.000', 'data': auth}
         except Exception as e:
             print(e)
@@ -70,7 +71,7 @@ class BooksAdministration(TransactionLogBase):
         :return:list of all authors
         """
         try:
-            authors = list(AuthorService().filter().values())
+            authors = AuthorService().filter().annotate(state_name=F('state__name')).values()
             return {'code': '100.000.000', 'data': authors}
         except Exception as e:
             lgr.exception(f"Error during fetch of authors {e}")
@@ -178,10 +179,10 @@ class BooksAdministration(TransactionLogBase):
         try:
             if not validate_uuid4(category_id):
                 return {'code': '500.400.004', 'message': 'Invalid category identifier'}
-            category = CategoryService().get(id=category_id)
+            category = CategoryService().filter(id=category_id).annotate(state_name=F('state__name')).values().first()
             if not category:
                 return {'code': '300.002.003', 'message': 'Category not found'}
-            return {'code': '100.000.000', 'data': model_to_dict(category)}
+            return {'code': '100.000.000', 'data': category}
         except Exception as e:
             lgr.exception(f"Failed to fetch category with Error : {e}")
             return {'code': '999.999.999', 'message': 'An error occurred during get category'}
@@ -194,7 +195,7 @@ class BooksAdministration(TransactionLogBase):
         :return: return queryset | []
         """
         try:
-            categories = CategoryService().filter().values()
+            categories = CategoryService().filter().annotate(state_name=F('state__name')).values()
             if not categories:
                 return {'code': '300.002.003', 'message': 'No categories found'}
             return {'code': '100.000.000', 'data': list(categories)}
@@ -313,10 +314,10 @@ class BooksAdministration(TransactionLogBase):
         try:
             if not validate_uuid4(book_id):
                 return {'code': '500.400.004', 'message': 'Invalid book identifier'}
-            book = BookService().get(id=book_id)
+            book = BookService().filter(id=book_id).annotate(state_name=F('status__name')).values().first()
             if not book:
                 return {'code': '300.003.002', 'message': 'No book record found'}
-            return {'code': '100.000.000', 'data': model_to_dict(book)}
+            return {'code': '100.000.000', 'data': book}
         except Exception as e:
             lgr.exception(f"Error during fetch book : {e}")
             return {'code': '999.999.999', 'message': 'Error during fetch book'}
@@ -330,7 +331,7 @@ class BooksAdministration(TransactionLogBase):
         :return: dict response of a list of all books based on conditions provided
         """
         try:
-            books = BookService().filter().values()
+            books = BookService().filter().annotate(status_name=F('status__name')).values()
             if not books:
                 return {'code': '300.003.002', 'message': 'No book records found'}
             return {'code': '100.000.000', 'data': list(books)}
