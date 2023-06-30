@@ -1,6 +1,7 @@
 asgiref==3.7.2
 coverage==7.2.7
 Django==4.2.2
+django-cors-headers==4.1.0
 Faker==12.0.1
 gender==0.0.33
 iniconfig==2.0.0
