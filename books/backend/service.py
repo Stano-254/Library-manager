@@ -1,5 +1,5 @@
 from base.backend.servicebase import ServiceBase
-from books.models import Author, Category, Books, BookIssued
+from books.models import Author, Category, Books, BookIssued, BookFees
 
 
 class AuthorService(ServiceBase):
@@ -19,5 +19,9 @@ class BookService(ServiceBase):
 class BookIssuedService(ServiceBase):
     """ Book issued our CRUD service"""
     manager = BookIssued.objects
+
+class BookFeesService(ServiceBase):
+    """ Book Fees our CRUD service"""
+    manager = BookFees.objects
 
 

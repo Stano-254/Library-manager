@@ -9,7 +9,7 @@ def salutations():
     return collection of salutation tittles
     :return: salutation choices
     """
-    return [('Prof', 'Professor'), ('Dr', 'Doctor'), ('Mr', 'Mr'), ('Mrs', 'Mrs'), ('Miss', 'Miss'), ('Ms', 'Ms')]
+    return [('Prof.', 'Professor'), ('Dr.', 'Doctor'), ('Mr.', 'Mr'), ('Mrs.', 'Mrs'), ('Miss', 'Miss'), ('Ms', 'Ms')]
 
 
 def gender():

@@ -7,6 +7,7 @@ from base.models import BaseModel, gender, State
 
 
 # Create your models here.
+#001
 class Members(BaseModel):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)

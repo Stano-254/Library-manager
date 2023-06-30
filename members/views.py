@@ -40,17 +40,21 @@ def get_members(request):
 def update_member(request):
     try:
         kwargs = get_request_data(request)
-        member_id = kwargs.pop('member_id')
+        member_id = kwargs.pop('id')
         return JsonResponse(MembersAdministration().update_member(request, member_id=member_id, **kwargs))
     except Exception as e:
         return JsonResponse({'code': '200.200.500', 'message': str(e)})
 
 
 @csrf_exempt
-def delete_member(request):
+def change_member_status(request):
     try:
+
+        kwargs = get_request_data(request)
+        print(f'delete :{kwargs}')
+        member_id = kwargs.pop('id')
         return JsonResponse(
-            MembersAdministration().delete_member(request, member_id=get_request_data(request).pop('member_id')))
+            MembersAdministration().change_member_status(request, member_id=member_id, **kwargs))
     except Exception as e:
         return JsonResponse({'code': '200.200.500', 'message': str(e)})
 
@@ -60,5 +64,5 @@ urlpatterns = [
     re_path(r'^get_member/$', get_member),
     re_path(r'^get_members/$', get_members),
     re_path(r'^update_member/$', update_member),
-    re_path(r'^delete_member/$', delete_member),
+    re_path(r'^change-member-status/$', change_member_status),
 ]
