@@ -54,7 +54,7 @@ def update_author(request):
 @csrf_exempt
 def delete_author(request):
     try:
-        author_id = get_request_data(request).pop('author_id')
+        author_id = get_request_data(request).pop('id')
         return JsonResponse(BooksAdministration().delete_author(request, author_id=author_id))
     except Exception as e:
         lgr.exception(f"Delete author error {e}")
@@ -95,7 +95,7 @@ def get_categories(request):
 def update_category(request):
     try:
         kwargs = get_request_data(request)
-        return JsonResponse(BooksAdministration().update_category(request, **kwargs))
+        return JsonResponse(BooksAdministration().update_category(request, **kwargs), safe=False)
     except Exception as e:
         lgr.exception(f"Update category error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during updating category"})
@@ -104,8 +104,8 @@ def update_category(request):
 @csrf_exempt
 def delete_category(request):
     try:
-        category_id = get_request_data(request).pop('category')
-        return JsonResponse(BooksAdministration().delete_category(request, category_id))
+        category_id = get_request_data(request).pop('id')
+        return JsonResponse(BooksAdministration().delete_category(request, category_id), safe=False)
     except Exception as e:
         lgr.exception(f"Delete category error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during category deletion"})
@@ -154,7 +154,8 @@ def update_book(request):
 @csrf_exempt
 def delete_book(request):
     try:
-        book_id = get_request_data(request).pop('book_id')
+        book_id = get_request_data(request).pop('id')
+        print(f"id {book_id}")
         return JsonResponse(BooksAdministration().delete_book(request, book_id))
     except Exception as e:
         lgr.exception(f"Delete book error {e}")
@@ -168,6 +169,45 @@ def archive_book(request):
     except Exception as e:
         lgr.exception(f"Delete book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
+
+@csrf_exempt
+def borrow_book(request):
+    try:
+        kwargs = get_request_data(request)
+        print(f"kwargs {kwargs}")
+        book_id = kwargs.pop('book_id')
+        member_id = kwargs.pop('member_id')
+        return JsonResponse(BooksAdministration().borrow_book(request, book_id, member_id,**kwargs))
+    except Exception as e:
+        lgr.exception(f"Borrow book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during borrow book"})
+
+@csrf_exempt
+def return_book(request):
+    try:
+        book_id = get_request_data(request).pop('book_id')
+        member_id = get_request_data(request).pop('member_id')
+        return JsonResponse(BooksAdministration().return_book(request, book_id, member_id))
+    except Exception as e:
+        lgr.exception(f"Return book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+@csrf_exempt
+def Issued_books(request):
+    try:
+        kwargs = get_request_data(request)
+        return JsonResponse(BooksAdministration().Issued_books(request, **kwargs))
+    except Exception as e:
+        lgr.exception(f"Issued book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during issued book"})
+
+@csrf_exempt
+def borrow_fee_lookup(request):
+    try:
+        return JsonResponse(BooksAdministration().borrow_fee_lookup())
+    except Exception as e:
+        lgr.exception(f"borrow fee {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+
 
 urlpatterns = [
     # author
@@ -189,4 +229,10 @@ urlpatterns = [
     re_path(r'^update_book/$', update_book),
     re_path(r'^delete_book/$', delete_book),
     re_path(r'^archive_book/$', archive_book),
+
+    # logic for borrow book and return book
+    re_path(r'^borrow_book/$', borrow_book),
+    re_path(r'^return_book/$', return_book),
+    re_path(r'^issued_books/$', Issued_books),
+    re_path(r'^borrow_fee_lookup/$', borrow_fee_lookup),
 ]
