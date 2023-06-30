@@ -108,7 +108,7 @@ class TestBookService(object):
             "title": "New Yorks Rocks",
             'published_date': "2023-04-01",
             'edition': '1st edition',
-            'ISBN': '4477858494999F484',
+            'isbn': '4477858494999F484',
             'author': mixer.blend('books.Author'),
             'category': mixer.blend('books.Category')
         }
