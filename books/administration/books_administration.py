@@ -2,8 +2,8 @@ import json
 import logging
 
 from django.core import serializers
-from django.db.models import F, Q, Value
-from django.db.models.functions import Concat
+from django.db.models import F, Q, Value, DateField, Case, When
+from django.db.models.functions import Concat, TruncDate, Cast
 from django.forms.models import model_to_dict
 
 from base.backend.service import StateService
@@ -542,15 +542,15 @@ class BooksAdministration(TransactionLogBase):
                     transaction, message="Book not available for borrowing", response_code='300.003.005')
                 return {'code': '300.003.005', 'message': 'Book not available for borrowing'}
             # check if the member is eligible to borrow a book
-            total_pending_fee = 0
+            total_fee = 0
             if BookIssuedService().filter(member=member):
-                total_pending_fee = BookIssuedService().filter(member=member).first().total_pending_fee
+                total_fee = BookIssuedService().filter(member=member).first().total_fee
             book_fee = BookFeesService().filter().first()
             if not book_fee:
                 self.mark_transaction_failed(transaction, message='Failed to get book fees',
                                              response_code='300.004.002')
                 return {'code': '300.004.002', 'message': 'Failed to get book fees'}
-            if total_pending_fee >= book_fee.max_borrow_fee_limit:
+            if total_fee >= book_fee.max_borrow_fee_limit:
                 self.mark_transaction_failed(
                     transaction, message='Member not eligible to borrow book due to uncleared fees',
                     response_code='200.001.007')
@@ -561,7 +561,7 @@ class BooksAdministration(TransactionLogBase):
                 return {'code': '300.003.006', 'message': 'Failed to borrow book'}
             book_issued = BookIssuedService().create(
                 book=book, member=member, borrow_duration=borrow_duration,
-                total_pending_fee=total_pending_fee + book_fee.borrow_fee, return_fee=book_fee.borrow_fee)
+                total_fee=total_fee + book_fee.borrow_fee, return_fee=book_fee.borrow_fee)
             if not book_issued:
                 self.mark_transaction_failed(transaction, message='Failed to issued book ', response_code='300.003.003')
                 return {'code': '300.003.003', 'message': 'Failed to issued book'}
@@ -608,9 +608,9 @@ class BooksAdministration(TransactionLogBase):
             book_issued = BookIssuedService().filter(book=book, member=member, returned=False).first()
             if not book_issued:
                 self.mark_transaction_failed(transaction, message='Failed to issued book ', response_code='300.003.003')
-                return {'code': '300.003.003', 'message': 'Failed to issued book'}
+                return {'code': '300.003.003', 'message': 'Sorry book already returned'}
             update_issued = BookIssuedService().update(
-                book_issued.id, total_pending_fee=book_issued.total_pending_fee - book_issued.return_fee,
+                book_issued.id, total_fee=book_issued.total_fee - book_issued.return_fee,
                 fee_paid=True, returned=True)
             if not update_issued:
                 self.mark_transaction_failed(transaction, message='Failed to return book ', response_code='300.003.008')
@@ -625,3 +625,41 @@ class BooksAdministration(TransactionLogBase):
     @staticmethod
     def borrow_fee_lookup():
         return {'code': '100.000.000', 'data': BookFeesService().filter().values().first()}
+
+    def Issued_books(self, request, **kwargs):
+        """
+        Handles fetching of all books issued out  from the system,
+        :param request: Original Django HTTP request
+        :return: dict response with code
+        """
+        try:
+
+            """
+            get all books from issued book table
+            """
+            issued_books = BookIssuedService().filter().annotate(
+                member_name=Concat(F('member__first_name'), Value(' '), F('member__last_name')),
+                membership_no=F('member__membership_no'), book_title=F('book__title'), author=Concat(
+                    F('book__author__salutation'), Value(' '),
+                    F('book__author__first_name'), Value(' '), F('book__author__last_name')),
+                issue_date=Cast(TruncDate('issued_date'), output_field=DateField()),
+                returned_date=Cast(TruncDate('return_date'), output_field=DateField()),
+                is_fee_paid=Case(
+                    When(fee_paid=True, then=Value('Yes')),
+                    default=Value('No')),
+                book_returned=Case(
+                    When(returned=True, then=Value('Yes')),
+                    default=Value('No'))
+
+            ).values(
+                'member_name', 'membership_no', 'book_title', 'author',
+                'borrow_duration', 'return_fee', 'total_fee', 'is_fee_paid', 'book_returned',
+                'issue_date', 'returned_date','member_id','book_id',
+            ).order_by('-issued_date')
+            if not issued_books:
+                return {'code': '300.003.008', 'message': 'Failed to return book'}
+            return {'code': '100.000.000', 'data': list(issued_books)}
+        except Exception as e:
+            lgr.exception(f"Error during return book : {e}")
+
+            return {'code': '999.999.999', 'message': 'Error Failed to return book record'}

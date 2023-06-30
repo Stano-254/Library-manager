@@ -52,7 +52,7 @@ class BookIssued(models.Model):
     borrow_duration = models.IntegerField(default=0)
     return_date = models.DateTimeField(blank=True,null=True)
     return_fee = models.DecimalField(default=0.0, decimal_places=2, max_digits=16)
-    total_pending_fee = models.DecimalField(default=0.0, decimal_places=2, max_digits=16)
+    total_fee = models.DecimalField(default=0.0, decimal_places=2, max_digits=16)
     fee_paid = models.BooleanField(default=False)
     returned = models.BooleanField(default=False)
 
@@ -63,7 +63,7 @@ class BookIssued(models.Model):
         """
             Override save method  to ensure valid return date have been saved.
         """
-        self.return_date = datetime.datetime.now() + timedelta(days=self.borrow_duration)
+        self.return_date = datetime.datetime.now() + timedelta(days=int(self.borrow_duration))
         super(BookIssued, self).save(*args, **kwargs)
 
 

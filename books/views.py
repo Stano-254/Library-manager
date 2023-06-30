@@ -175,7 +175,6 @@ def borrow_book(request):
     try:
         kwargs = get_request_data(request)
         print(f"kwargs {kwargs}")
-        
         book_id = kwargs.pop('book_id')
         member_id = kwargs.pop('member_id')
         return JsonResponse(BooksAdministration().borrow_book(request, book_id, member_id,**kwargs))
@@ -192,6 +191,14 @@ def return_book(request):
     except Exception as e:
         lgr.exception(f"Return book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+@csrf_exempt
+def Issued_books(request):
+    try:
+        kwargs = get_request_data(request)
+        return JsonResponse(BooksAdministration().Issued_books(request, **kwargs))
+    except Exception as e:
+        lgr.exception(f"Issued book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during issued book"})
 
 @csrf_exempt
 def borrow_fee_lookup(request):
@@ -226,6 +233,6 @@ urlpatterns = [
     # logic for borrow book and return book
     re_path(r'^borrow_book/$', borrow_book),
     re_path(r'^return_book/$', return_book),
-    re_path(r'^issued_books/$', return_book),
+    re_path(r'^issued_books/$', Issued_books),
     re_path(r'^borrow_fee_lookup/$', borrow_fee_lookup),
 ]
