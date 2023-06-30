@@ -65,7 +65,7 @@ class BooksAdministration(TransactionLogBase):
             print(e)
             return {'code': '999.999.999', 'message': 'Unable to get author'}
 
-    def __get_author(self,transaction, author_id):
+    def __get_author(self, transaction, author_id):
         """
         Get author from database
         :param request: HttpRequest
@@ -211,7 +211,7 @@ class BooksAdministration(TransactionLogBase):
             lgr.exception(f"Failed to fetch category with Error : {e}")
             return {'code': '999.999.999', 'message': 'An error occurred during get category'}
 
-    def __get_category(self,transaction, category_id):
+    def __get_category(self, transaction, category_id):
         """
         Get author from database
         :param request: HttpRequest
@@ -621,3 +621,7 @@ class BooksAdministration(TransactionLogBase):
             lgr.exception(f"Error during return book : {e}")
             self.mark_transaction_failed(transaction, message='Failed to return book', response=str(e))
             return {'code': '999.999.999', 'message': 'Error Failed to return book record'}
+
+    @staticmethod
+    def borrow_fee_lookup():
+        return {'code': '100.000.000', 'data': BookFeesService().filter().values().first()}

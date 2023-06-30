@@ -173,9 +173,12 @@ def archive_book(request):
 @csrf_exempt
 def borrow_book(request):
     try:
-        book_id = get_request_data(request).pop('book_id')
-        member_id = get_request_data(request).pop('member_id')
-        return JsonResponse(BooksAdministration().borrow_book(request, book_id, member_id))
+        kwargs = get_request_data(request)
+        print(f"kwargs {kwargs}")
+        
+        book_id = kwargs.pop('book_id')
+        member_id = kwargs.pop('member_id')
+        return JsonResponse(BooksAdministration().borrow_book(request, book_id, member_id,**kwargs))
     except Exception as e:
         lgr.exception(f"Borrow book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during borrow book"})
@@ -189,6 +192,15 @@ def return_book(request):
     except Exception as e:
         lgr.exception(f"Return book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+
+@csrf_exempt
+def borrow_fee_lookup(request):
+    try:
+        return JsonResponse(BooksAdministration().borrow_fee_lookup())
+    except Exception as e:
+        lgr.exception(f"borrow fee {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+
 
 urlpatterns = [
     # author
@@ -215,4 +227,5 @@ urlpatterns = [
     re_path(r'^borrow_book/$', borrow_book),
     re_path(r'^return_book/$', return_book),
     re_path(r'^issued_books/$', return_book),
+    re_path(r'^borrow_fee_lookup/$', borrow_fee_lookup),
 ]
