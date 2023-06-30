@@ -85,10 +85,11 @@ class MembersAdministration(TransactionLogBase):
             lgr.exception(f"Error occurred during fetch of members : {e}")
             return {'code': '999.999.999', 'message': 'Error occurred during retrieval of members'}
 
-    def update_member(self, request, **kwargs):
+    def update_member(self, request, member_id, **kwargs):
         """
         Handles updating of members personal information or
         any other information related to members
+        :param member_id: unique identifier of the member
         :param request: Original Django HTTP request
         :type request: WSGIRequest
         :param kwargs: dict of other parameters
@@ -99,7 +100,6 @@ class MembersAdministration(TransactionLogBase):
             transaction = self.log_transaction('UpdateMember', request=request, user=request.user)
             if not transaction:
                 return {'code': '900.500.500', 'message': 'Update member transaction failed'}
-            member_id = kwargs.pop('member_id')
             if not validate_uuid4(member_id):
                 self.mark_transaction_failed(
                     transaction, message='Invalid member identifier', response_code='500.400.004')
@@ -114,13 +114,13 @@ class MembersAdministration(TransactionLogBase):
                     transaction, message='Member details not update', response_code='200.001.003')
                 return {'code': '200.001.003', 'message': 'Member details not updated'}
             self.complete_transaction(transaction, message='Success')
-            return {'code': '100.000.000', 'message': 'success', 'data': model_to_dict(updated_member)}
+            return {'code': '100.000.000', 'message': 'success'}
         except Exception as e:
             lgr.exception(f"Error occurred during updating member details")
             self.mark_transaction_failed(transaction, response=str(e))
             return {'code': '999.999.999', 'message': 'Error updating member details'}
 
-    def delete_member(self, request, member_id):
+    def change_member_status(self, request, member_id, **kwargs):
         """
         Handles deletion of user from the system hypothetically
         though the user is never deleted just updated to state deleted
@@ -128,9 +128,10 @@ class MembersAdministration(TransactionLogBase):
         :param member_id: the unique member identifier
         :return: dict response with code
         """
+        action = kwargs.get('action', 'delete').title()
         transaction = None
         try:
-            transaction = self.log_transaction('DeleteMember', request=request, user=request.user)
+            transaction = self.log_transaction(f'{action}Member', request=request, user=request.user)
             if not transaction:
                 return {'code': '900.500.500', 'message': 'Delete member transaction failed'}
             if not validate_uuid4(member_id):
@@ -141,12 +142,38 @@ class MembersAdministration(TransactionLogBase):
             if not member:
                 self.mark_transaction_failed(transaction, message='Member not found', response_code='200.001.002')
                 return {'code': '200.001.002', 'message': 'Member not found'}
-            delete_member = MemberService().update(member.id, state=StateService().get(name='Deleted'))
-            if not delete_member:
-                self.mark_transaction_failed(transaction, message='Member not deleted', response_code='200.001.003')
-                return {'code': '200.001.003', 'message': 'Member not deleted'}
-            self.complete_transaction(transaction, message='Success')
-            return {'code': '100.000.000', 'message': 'Success'}
+            # check for action to be performed
+            state = ""
+            if action == "Delete":
+                # check current member state
+                if member.state.name == 'Deleted':
+                    self.mark_transaction_failed(transaction, message='Member already deleted',
+                                                 response_code='100.000.001')
+                    return {'code': '100.000.001', 'message': 'Cannot deleted member, record was already deleted'}
+                state = StateService().get(name='Deleted')
+            elif action == 'Enable':
+                if member.state.name == 'Active':
+                    self.mark_transaction_failed(
+                        transaction, message='Member already activated', response_code='100.000.002')
+                    return {'code': '100.000.002', 'message': 'Member already activated'}
+                state = StateService().get(name='Active')
+            elif action == 'Disable':
+                if member.state.name in tuple(['Disabled', 'Deleted']):
+                    self.mark_transaction_failed(
+                        transaction, message='Member already Disabled', response_code='100.000.003')
+                    return {'code': '100.000.003', 'message': 'Member already Disabled'}
+                state = StateService().get(name='Disabled')
+            else:
+                self.mark_transaction_failed(
+                    transaction, message='Wrong action', response_code='100.000.003')
+                return {'code': '300.300.003', 'message': 'No action to be performed'}
+            update_member = MemberService().update(member.id, state=state)
+            if not update_member:
+                self.mark_transaction_failed(
+                    transaction, message=f'Failed to {action} Member', response_code='200.001.007')
+                return {'code': '200.001.007', 'message': f'Failed to {action} Member'}
+            self.complete_transaction(transaction, message=f'{action } member Successfully')
+            return {'code': '100.000.000', 'message': f'{action } member Successfully'}
         except Exception as e:
             lgr.exception(f"Error deleting member details : {e}")
             self.mark_transaction_failed(transaction, message='Error deleting member details', response=str(e))

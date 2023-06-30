@@ -30,9 +30,9 @@ class BooksAdmin(admin.ModelAdmin):
     Books admin site
     """
     list_display = (
-        'title', 'published_date', 'edition', 'book_image', 'author', 'category', 'status', 'date_modified',
+        'isbn', 'title', 'published_date', 'edition', 'book_image', 'author', 'category', 'status', 'date_modified',
         'date_created')
-    search_fields = ('ISNB', 'author', 'title')
+    search_fields = ('isbn', 'author', 'title')
     list_filter = ('status__name', 'date_created', 'author')
 
 

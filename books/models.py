@@ -32,7 +32,7 @@ class Books(BaseModel):
     title = models.CharField(max_length=100)
     published_date = models.DateField()
     edition = models.CharField(max_length=10)
-    ISBN = models.CharField(max_length=25, unique=True)
+    isbn = models.CharField(max_length=25, unique=True)
     book_image = models.CharField(max_length=200, null=True, blank=True)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     no_of_books = models.IntegerField(default=1)
