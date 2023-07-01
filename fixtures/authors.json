@@ -1,0 +1,28 @@
+[
+{
+    "model": "books.author",
+    "pk": "9284b71f-4862-4f65-b6ba-4cde3524901b",
+    "fields": {
+        "date_modified": "2023-06-29T21:25:33.377Z",
+        "date_created": "2023-06-15T11:32:10.507Z",
+        "salutation": "Mrs",
+        "first_name": "Johnson",
+        "last_name": "Nyangweso",
+        "description": "The best author of the 21 century to the 23rd century",
+        "state": "136f927f-4429-4396-ac22-29a4357c60b0"
+    }
+},
+{
+    "model": "books.author",
+    "pk": "a9dc04d8-f06d-4fbf-9a5e-86726f0602d0",
+    "fields": {
+        "date_modified": "2023-06-29T21:31:50.356Z",
+        "date_created": "2023-06-29T21:09:08.794Z",
+        "salutation": "Prof.",
+        "first_name": "Mike",
+        "last_name": "Andrew",
+        "description": "Melbourne, Australia",
+        "state": "136f927f-4429-4396-ac22-29a4357c60b0"
+    }
+}
+]

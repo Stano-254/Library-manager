@@ -1,0 +1,47 @@
+[
+{
+    "model": "books.bookissued",
+    "pk": 3,
+    "fields": {
+        "book": "5ee69252-efa6-4e21-9e47-9f9a93546113",
+        "member": "9c568164-ef81-48c1-a88b-3fabcf7b72a7",
+        "issued_date": "2023-06-21T09:23:52.648Z",
+        "borrow_duration": 7,
+        "return_date": "2023-06-28T09:28:34.008Z",
+        "return_fee": "120.00",
+        "total_fee": "0.00",
+        "fee_paid": true,
+        "returned": true
+    }
+},
+{
+    "model": "books.bookissued",
+    "pk": 4,
+    "fields": {
+        "book": "5ee69252-efa6-4e21-9e47-9f9a93546113",
+        "member": "024e0d65-3d34-41b0-b2c5-67cd9be97f4a",
+        "issued_date": "2023-06-30T17:38:00.238Z",
+        "borrow_duration": 7,
+        "return_date": "2023-07-07T19:32:03.291Z",
+        "return_fee": "120.00",
+        "total_fee": "0.00",
+        "fee_paid": true,
+        "returned": true
+    }
+},
+{
+    "model": "books.bookissued",
+    "pk": 5,
+    "fields": {
+        "book": "8cbb7be6-e23c-49ef-b103-eb6194cf526a",
+        "member": "88eeb1b7-4aed-4a59-90ef-1b8a4f9c1da7",
+        "issued_date": "2023-06-30T19:15:55.958Z",
+        "borrow_duration": 10,
+        "return_date": "2023-07-10T19:15:55.958Z",
+        "return_fee": "120.00",
+        "total_fee": "120.00",
+        "fee_paid": false,
+        "returned": false
+    }
+}
+]

@@ -1,0 +1,206 @@
+[
+{
+    "model": "base.transactiontype",
+    "pk": "0166c499-5cb9-43e0-884e-f944a1cd1e67",
+    "fields": {
+        "date_modified": "2023-06-16T20:00:54.956Z",
+        "date_created": "2023-06-16T20:00:54.956Z",
+        "name": "UpdateBook",
+        "description": "Update Book",
+        "simple_name": "Update Book",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "2f0fb3ea-4065-40d8-b953-9e32bad74f4c",
+    "fields": {
+        "date_modified": "2023-06-29T02:02:44.418Z",
+        "date_created": "2023-06-29T02:02:44.418Z",
+        "name": "EnableMember",
+        "description": "",
+        "simple_name": "EnableMember",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "3de1260c-affd-4774-af92-1516da300886",
+    "fields": {
+        "date_modified": "2023-06-29T02:06:37.877Z",
+        "date_created": "2023-06-29T02:06:23.167Z",
+        "name": "DisableMember",
+        "description": "",
+        "simple_name": "Disable Member",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "417832ef-84c4-4309-aa5e-306c2d4bc870",
+    "fields": {
+        "date_modified": "2023-06-16T20:00:38.280Z",
+        "date_created": "2023-06-16T20:00:38.280Z",
+        "name": "CreateBook",
+        "description": "Create Book",
+        "simple_name": "Create Book",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "434a55d6-dff2-4f35-a21e-98be2c95bdc2",
+    "fields": {
+        "date_modified": "2023-06-16T19:57:19.561Z",
+        "date_created": "2023-06-16T19:57:19.561Z",
+        "name": "DeleteMember",
+        "description": "Delete Member",
+        "simple_name": "Delete Member",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "5d2e7f34-4a0a-4a97-9baf-f9b30fb66180",
+    "fields": {
+        "date_modified": "2023-06-16T19:58:31.100Z",
+        "date_created": "2023-06-16T19:58:31.100Z",
+        "name": "DeleteBook",
+        "description": "Delete Book",
+        "simple_name": "Delete Book",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "6120ea5e-70ab-43e3-8745-9f9eca52def5",
+    "fields": {
+        "date_modified": "2023-06-16T19:56:24.754Z",
+        "date_created": "2023-06-16T19:56:24.754Z",
+        "name": "CreateMember",
+        "description": "Create Member details",
+        "simple_name": "Create Member",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "6941ebbe-8994-4f38-8239-b56064c23c84",
+    "fields": {
+        "date_modified": "2023-06-16T19:59:26.184Z",
+        "date_created": "2023-06-16T19:59:26.184Z",
+        "name": "CreateCategory",
+        "description": "Create Category",
+        "simple_name": "Create Category",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "6c131fb9-93d7-4f58-b833-baf19a20dee7",
+    "fields": {
+        "date_modified": "2023-06-16T19:58:54.599Z",
+        "date_created": "2023-06-16T19:58:54.599Z",
+        "name": "DeleteCategory",
+        "description": "Delete Category",
+        "simple_name": "Delete Category",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "8db4954e-74d8-4e5c-9249-e110527ab4ee",
+    "fields": {
+        "date_modified": "2023-06-16T19:56:52.720Z",
+        "date_created": "2023-06-16T19:56:52.720Z",
+        "name": "UpdateMember",
+        "description": "Update Member",
+        "simple_name": "Update Member",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "94c649ef-a599-40b3-9f1e-8465c944df21",
+    "fields": {
+        "date_modified": "2023-06-16T11:33:40.036Z",
+        "date_created": "2023-06-16T11:33:40.036Z",
+        "name": "UpdateAuthor",
+        "description": "Update Author details",
+        "simple_name": "Update Author",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "bfb7ef3c-1f10-4cce-9b18-5a42aeb061f2",
+    "fields": {
+        "date_modified": "2023-06-21T09:06:03.513Z",
+        "date_created": "2023-06-21T09:06:03.513Z",
+        "name": "BorrowBook",
+        "description": "BorrowBook",
+        "simple_name": "Borrow Book",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "ca38c068-d4f7-4de2-a690-b4bc8d2ca8c2",
+    "fields": {
+        "date_modified": "2023-06-15T10:33:57.869Z",
+        "date_created": "2023-06-15T10:29:08.963Z",
+        "name": "CreateAuthor",
+        "description": "Create Author",
+        "simple_name": "Create Author",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "cc19b57a-4d46-46c0-94dd-ded0ade90a96",
+    "fields": {
+        "date_modified": "2023-06-16T11:34:11.125Z",
+        "date_created": "2023-06-16T11:34:11.125Z",
+        "name": "DeleteAuthor",
+        "description": "Delete Author  from the system",
+        "simple_name": "Delete Author",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "d31687fd-7cc2-4464-8fb4-7e394415cb5d",
+    "fields": {
+        "date_modified": "2023-06-16T19:59:45.843Z",
+        "date_created": "2023-06-16T19:59:45.843Z",
+        "name": "UpdateCategory",
+        "description": "Update Category",
+        "simple_name": "Update Category",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "d53c6cc1-9bd3-458c-a237-414bf137dd7a",
+    "fields": {
+        "date_modified": "2023-06-21T09:06:38.135Z",
+        "date_created": "2023-06-21T09:06:38.136Z",
+        "name": "ReturnBook",
+        "description": "ReturnBook",
+        "simple_name": "Return Book",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "base.transactiontype",
+    "pk": "ff224715-ad58-40d4-9c5e-8e72c9f304d5",
+    "fields": {
+        "date_modified": "2023-06-16T19:57:51.651Z",
+        "date_created": "2023-06-16T19:57:51.651Z",
+        "name": "ArchiveBook",
+        "description": "Archive Book",
+        "simple_name": "Archive Book",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+}
+]
