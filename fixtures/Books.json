@@ -1,0 +1,38 @@
+[
+{
+    "model": "books.books",
+    "pk": "5ee69252-efa6-4e21-9e47-9f9a93546113",
+    "fields": {
+        "date_modified": "2023-06-30T19:34:39.582Z",
+        "date_created": "2023-06-16T20:14:48.319Z",
+        "title": "The sun goes down",
+        "published_date": "2023-12-02",
+        "edition": "2nd",
+        "isbn": "3564758hfj",
+        "book_image": null,
+        "author": "a9dc04d8-f06d-4fbf-9a5e-86726f0602d0",
+        "no_of_books": 53,
+        "no_of_reserve_books": 3,
+        "category": "22ce534e-bbab-4a6e-b3fb-fb119a4c1761",
+        "status": "136f927f-4429-4396-ac22-29a4357c60b0"
+    }
+},
+{
+    "model": "books.books",
+    "pk": "8cbb7be6-e23c-49ef-b103-eb6194cf526a",
+    "fields": {
+        "date_modified": "2023-06-30T19:15:55.610Z",
+        "date_created": "2023-06-30T11:03:07.641Z",
+        "title": "The sun will rise agains",
+        "published_date": "2021-06-30",
+        "edition": "1st edition",
+        "isbn": "25353674889443",
+        "book_image": null,
+        "author": "9284b71f-4862-4f65-b6ba-4cde3524901b",
+        "no_of_books": 8,
+        "no_of_reserve_books": 1,
+        "category": "be2e0a17-6116-4979-be6c-c7a0748e60c8",
+        "status": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+}
+]

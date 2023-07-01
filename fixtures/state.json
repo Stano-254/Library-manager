@@ -1,0 +1,52 @@
+[
+{
+    "model": "base.state",
+    "pk": "136f927f-4429-4396-ac22-29a4357c60b0",
+    "fields": {
+        "date_modified": "2023-06-16T11:49:57.082Z",
+        "date_created": "2023-06-16T11:49:57.083Z",
+        "name": "Deleted",
+        "description": "Deleted items from database"
+    }
+},
+{
+    "model": "base.state",
+    "pk": "5d9e5164-1141-4927-a283-baa12ac08383",
+    "fields": {
+        "date_modified": "2023-06-12T12:29:41.896Z",
+        "date_created": "2023-06-12T12:29:41.896Z",
+        "name": "Active",
+        "description": "active state"
+    }
+},
+{
+    "model": "base.state",
+    "pk": "62d200d0-afcf-4f40-bfcd-efcf9866a8cf",
+    "fields": {
+        "date_modified": "2023-06-15T10:29:38.054Z",
+        "date_created": "2023-06-15T10:29:38.054Z",
+        "name": "Completed",
+        "description": "complete transaction"
+    }
+},
+{
+    "model": "base.state",
+    "pk": "da9b6669-55f0-438e-91d2-ca8eea6adc8f",
+    "fields": {
+        "date_modified": "2023-06-29T02:14:43.681Z",
+        "date_created": "2023-06-29T02:14:43.681Z",
+        "name": "Disabled",
+        "description": ""
+    }
+},
+{
+    "model": "base.state",
+    "pk": "dac3052b-8d4d-4543-9439-9ef53d7631f5",
+    "fields": {
+        "date_modified": "2023-06-15T10:29:51.777Z",
+        "date_created": "2023-06-15T10:29:51.777Z",
+        "name": "Failed",
+        "description": "failed"
+    }
+}
+]

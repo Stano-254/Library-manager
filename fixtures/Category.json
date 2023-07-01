@@ -1,0 +1,24 @@
+[
+{
+    "model": "books.category",
+    "pk": "22ce534e-bbab-4a6e-b3fb-fb119a4c1761",
+    "fields": {
+        "date_modified": "2023-06-30T07:45:38.690Z",
+        "date_created": "2023-06-30T07:36:57.774Z",
+        "name": "Journals ",
+        "description": "Recognized publications from corporate of renowned backgrounds in a given fields",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "books.category",
+    "pk": "be2e0a17-6116-4979-be6c-c7a0748e60c8",
+    "fields": {
+        "date_modified": "2023-06-30T07:48:15.468Z",
+        "date_created": "2023-06-16T20:09:35.669Z",
+        "name": "Fiction",
+        "description": "Fiction genre book ",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+}
+]
