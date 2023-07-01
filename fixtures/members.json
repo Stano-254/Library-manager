@@ -1,0 +1,47 @@
+[
+{
+    "model": "members.members",
+    "pk": "024e0d65-3d34-41b0-b2c5-67cd9be97f4a",
+    "fields": {
+        "date_modified": "2023-06-29T02:25:09.921Z",
+        "date_created": "2023-06-16T20:01:52.312Z",
+        "first_name": "Daniel",
+        "last_name": "Dans",
+        "national_id": "33440034",
+        "mobile_no": "070278399023",
+        "gender": "F",
+        "membership_no": "LB0002",
+        "state": "da9b6669-55f0-438e-91d2-ca8eea6adc8f"
+    }
+},
+{
+    "model": "members.members",
+    "pk": "88eeb1b7-4aed-4a59-90ef-1b8a4f9c1da7",
+    "fields": {
+        "date_modified": "2023-06-29T02:16:04.805Z",
+        "date_created": "2023-06-29T00:59:05.473Z",
+        "first_name": "Stanley",
+        "last_name": "Emali",
+        "national_id": "33185511",
+        "mobile_no": "0702707831",
+        "gender": "Male",
+        "membership_no": "LB0003",
+        "state": "5d9e5164-1141-4927-a283-baa12ac08383"
+    }
+},
+{
+    "model": "members.members",
+    "pk": "9c568164-ef81-48c1-a88b-3fabcf7b72a7",
+    "fields": {
+        "date_modified": "2023-06-29T02:25:22.698Z",
+        "date_created": "2023-06-16T18:24:11.636Z",
+        "first_name": "James",
+        "last_name": "stampombie",
+        "national_id": "33440012",
+        "mobile_no": "07027839943",
+        "gender": "Male",
+        "membership_no": "LB0001",
+        "state": "136f927f-4429-4396-ac22-29a4357c60b0"
+    }
+}
+]
