@@ -1,8 +1,11 @@
 import logging
+
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.urls import re_path
 from django.views.decorators.csrf import csrf_exempt
 
+from base.backend.utils.decorators import user_login_required
 from base.backend.utils.utilities import get_request_data
 from books.administration.books_administration import BooksAdministration
 
@@ -10,6 +13,7 @@ lgr = logging.getLogger(__name__)
 
 
 @csrf_exempt
+@user_login_required
 def create_author(request):
     try:
         kwargs = get_request_data(request)
@@ -20,6 +24,7 @@ def create_author(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_author(request):
     try:
         print("well we fucked up")
@@ -31,6 +36,7 @@ def get_author(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_all_authors(request):
     try:
         print("ooh we are good")
@@ -42,6 +48,7 @@ def get_all_authors(request):
 
 
 @csrf_exempt
+@user_login_required
 def update_author(request):
     try:
         kwargs = get_request_data(request)
@@ -52,6 +59,7 @@ def update_author(request):
 
 
 @csrf_exempt
+@user_login_required
 def delete_author(request):
     try:
         author_id = get_request_data(request).pop('id')
@@ -62,6 +70,7 @@ def delete_author(request):
 
 
 @csrf_exempt
+@user_login_required
 def create_category(request):
     try:
         kwargs = get_request_data(request)
@@ -72,6 +81,7 @@ def create_category(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_category(request):
     try:
         category_id = get_request_data(request).pop('category')
@@ -82,6 +92,7 @@ def get_category(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_categories(request):
     try:
         kwargs = get_request_data(request)
@@ -92,6 +103,7 @@ def get_categories(request):
 
 
 @csrf_exempt
+@user_login_required
 def update_category(request):
     try:
         kwargs = get_request_data(request)
@@ -102,6 +114,7 @@ def update_category(request):
 
 
 @csrf_exempt
+@user_login_required
 def delete_category(request):
     try:
         category_id = get_request_data(request).pop('id')
@@ -112,6 +125,7 @@ def delete_category(request):
 
 
 @csrf_exempt
+@user_login_required
 def create_book(request):
     try:
         kwargs = get_request_data(request)
@@ -122,6 +136,7 @@ def create_book(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_book(request):
     try:
         book_id = get_request_data(request).pop('book_id')
@@ -132,6 +147,7 @@ def get_book(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_books(request):
     try:
         kwargs = get_request_data(request)
@@ -142,6 +158,7 @@ def get_books(request):
 
 
 @csrf_exempt
+@user_login_required
 def update_book(request):
     try:
         kwargs = get_request_data(request)
@@ -152,6 +169,7 @@ def update_book(request):
 
 
 @csrf_exempt
+@user_login_required
 def delete_book(request):
     try:
         book_id = get_request_data(request).pop('id')
@@ -162,6 +180,7 @@ def delete_book(request):
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
 
 @csrf_exempt
+@user_login_required
 def archive_book(request):
     try:
         book_id = get_request_data(request).pop('book_id')
@@ -171,6 +190,7 @@ def archive_book(request):
         return JsonResponse({'code': "500.000.100", "message": "Failure during book deletion"})
 
 @csrf_exempt
+@user_login_required
 def borrow_book(request):
     try:
         kwargs = get_request_data(request)
@@ -183,6 +203,7 @@ def borrow_book(request):
         return JsonResponse({'code': "500.000.100", "message": "Failure during borrow book"})
 
 @csrf_exempt
+@user_login_required
 def return_book(request):
     try:
         book_id = get_request_data(request).pop('book_id')
@@ -192,6 +213,7 @@ def return_book(request):
         lgr.exception(f"Return book error {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
 @csrf_exempt
+@user_login_required
 def Issued_books(request):
     try:
         kwargs = get_request_data(request)
@@ -201,12 +223,23 @@ def Issued_books(request):
         return JsonResponse({'code': "500.000.100", "message": "Failure during issued book"})
 
 @csrf_exempt
+@user_login_required
 def borrow_fee_lookup(request):
     try:
         return JsonResponse(BooksAdministration().borrow_fee_lookup())
     except Exception as e:
         lgr.exception(f"borrow fee {e}")
         return JsonResponse({'code': "500.000.100", "message": "Failure during return book"})
+
+@csrf_exempt
+@user_login_required
+def filter_books(request):
+    try:
+        kwargs = get_request_data(request)
+        return JsonResponse(BooksAdministration().filter_books(request,**kwargs))
+    except Exception as e:
+        lgr.exception(f"search book error {e}")
+        return JsonResponse({'code': "500.000.100", "message": "Failure during search books"})
 
 
 urlpatterns = [
@@ -235,4 +268,5 @@ urlpatterns = [
     re_path(r'^return_book/$', return_book),
     re_path(r'^issued_books/$', Issued_books),
     re_path(r'^borrow_fee_lookup/$', borrow_fee_lookup),
+    re_path(r'^search_book/$', filter_books),
 ]
