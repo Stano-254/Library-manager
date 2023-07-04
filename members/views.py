@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import re_path
 from django.views.decorators.csrf import csrf_exempt
 
+from base.backend.utils.decorators import user_login_required
 from base.backend.utils.utilities import get_request_data
 from members.administration.members_administration import MembersAdministration
 
@@ -10,6 +11,7 @@ from members.administration.members_administration import MembersAdministration
 # Create your views here.
 
 @csrf_exempt
+@user_login_required
 def create_member(request):
     try:
         kwargs = get_request_data(request)
@@ -19,6 +21,7 @@ def create_member(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_member(request):
     try:
         return JsonResponse(
@@ -28,6 +31,7 @@ def get_member(request):
 
 
 @csrf_exempt
+@user_login_required
 def get_members(request):
     try:
         kwargs = get_request_data(request)
@@ -37,6 +41,7 @@ def get_members(request):
 
 
 @csrf_exempt
+@user_login_required
 def update_member(request):
     try:
         kwargs = get_request_data(request)
@@ -47,6 +52,7 @@ def update_member(request):
 
 
 @csrf_exempt
+@user_login_required
 def change_member_status(request):
     try:
 

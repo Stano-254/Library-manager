@@ -5,7 +5,7 @@ Library management system UI
 
 Book Author
 
-![Alt text](image-1.png)
+![image.png](image.png)
 
 Book category CRUD
 ![Alt text](image-2.png)

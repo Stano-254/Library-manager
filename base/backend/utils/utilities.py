@@ -1,9 +1,15 @@
+import base64
+import binascii
 import json
 import logging
+import os
 import re
+from datetime import timedelta
 from uuid import UUID
 
 from django.http import QueryDict
+
+from library_manager import settings
 
 lgr = logging.getLogger(__name__)
 
@@ -80,3 +86,26 @@ def validate_name(name, min_length=2, max_length=50):
     except Exception as e:
         lgr.error('validate_name: %s', e)
     return False
+
+
+def create_token():
+    """
+    Generates a standard token for auth
+    @return:
+    """
+    try:
+        data_string = binascii.hexlify(os.urandom(15)).decode()
+        data_bytes = data_string.encode("utf-8")
+        return base64.b64encode(data_bytes)
+    except Exception as e:
+        lgr.exception('generate_token Exception: %s', e)
+    return None
+
+
+def token_expiry():
+    """
+    callable functions for generating an expiry time for an access_token
+    @rtype: datetime
+    """
+    from django.utils import timezone as django_tz
+    return django_tz.now() + timedelta(seconds=settings.TOKEN_EXPIRY_SECONDS)

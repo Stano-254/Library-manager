@@ -1,6 +1,9 @@
 import uuid
 
+from django.contrib.auth.models import User
 from django.db import models
+
+from base.backend.utils.utilities import create_token, token_expiry
 
 
 # Create your models here.
@@ -93,3 +96,32 @@ class Transaction(BaseModel):
 
     def __str__(self):
         return f"{self.transaction_type} {self.state}"
+
+
+class UserIdentity(BaseModel):
+    token = models.CharField(default=create_token, max_length=200)
+    expires_at = models.DateTimeField(default=token_expiry)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    source_ip = models.GenericIPAddressField(max_length=50, null=True, blank=True)
+    state = models.ForeignKey(State, default=State.default_state, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} {self.source_ip}'
+
+    class Meta(object):
+        ordering = ('-date_created',)
+        verbose_name_plural = 'User Identities'
+
+    def extend(self):
+        """
+        Extends the access token for the model.
+        @return: The model instance after saving.
+        @rtype: Identity
+        """
+        # noinspection PyBroadException
+        try:
+            self.expires_at = token_expiry()
+            self.save()
+        except Exception:
+            pass
+        return self
