@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.urls import re_path
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
 
 from base.backend.service import UserIdentityService, StateService
 from base.backend.utils.utilities import get_request_data
@@ -53,8 +54,26 @@ class Authentication(object):
         except Exception as e:
             lgr.exception('token Exception: %s' % e)
             return JsonResponse({"code": "700.006.003"})
+    @csrf_exempt
+    def refresh_token(self, request):
+        request_data = get_request_data(request)
+        print("request",request_data)
+        expired_token = request_data.get('expired_token')
+        expiry_timestamp = request_data.get('expiry_timestamp')
+        dt_object = datetime.fromtimestamp(expiry_timestamp)
+        print('Date and Time is:', dt_object)
+        user_auth = UserIdentityService().filter(token=str(expired_token)).first()
+        user_auth.extend()
+        user_auth.refresh_from_db()
+        return JsonResponse({
+            "code": "100.000.000", 'data': {
+                'token': str(user_auth.token),
+                'expires_at': calendar.timegm(user_auth.expires_at.timetuple())
+            }
+        })
 
 
 urlpatterns = [
-    re_path(r'', Authentication.login),
+    re_path(r'login/', Authentication().login),
+    re_path(r'refresh-token/', Authentication().refresh_token),
 ]
