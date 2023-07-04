@@ -7,7 +7,6 @@ from django.http import JsonResponse
 from django.urls import re_path
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
 
 from base.backend.service import UserIdentityService, StateService
 from base.backend.utils.utilities import get_request_data

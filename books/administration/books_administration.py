@@ -676,17 +676,17 @@ class BooksAdministration(TransactionLogBase):
             get all books from issued book table
             """
             query = kwargs.get('params', None)
-            build_query = Q(title=query) | Q(author__first_name=query) | Q(author__last_name=query)
-            issued_books = BookService().filter(build_query).annotate(
+            build_query = Q(title__icontains=query) | Q(author__first_name__icontains=query) | Q(author__last_name__icontains=query)
+            filter_books = BookService().filter(build_query).annotate(
                 status_name=F('status__name'),
                 category_name=F('category__name'),
                 author_name=Concat(
                     F('author__salutation'), Value(' '), F('author__first_name'), Value(' '), F('author__last_name'))
             ).values().order_by('-date_created')
-            if not issued_books:
+            if not filter_books:
                 return {'code': '300.003.008', 'message': 'Failed to filter books'}
-            return {'code': '100.000.000', 'data': list(issued_books)}
+            return {'code': '100.000.000', 'data': list(filter_books)}
         except Exception as e:
-            lgr.exception(f"Error during return book : {e}")
+            lgr.exception(f"Error during filter book : {e}")
 
             return {'code': '999.999.999', 'message': 'Error Failed to filter books'}
