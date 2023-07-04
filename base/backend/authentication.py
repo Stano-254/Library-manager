@@ -1,6 +1,7 @@
 import calendar
-import json
 import logging
+import token
+
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.urls import re_path
@@ -58,14 +59,10 @@ class Authentication(object):
     @csrf_exempt
     def refresh_token(self, request):
         request_data = get_request_data(request)
-        lgr.info("request", request_data)
         expired_token = request_data.get('expired_token')
-        expiry_timestamp = request_data.get('expiry_timestamp')
         if not expired_token:
             authorization_header = request.META.get('HTTP_AUTHORIZATION')
             _, expired_token = authorization_header.split(' ')
-
-            dt_object = datetime.fromtimestamp(expiry_timestamp)
         user_auth = UserIdentityService().filter(token=expired_token).first()
         user_auth.extend()
         user_auth.refresh_from_db()
