@@ -1,5 +1,5 @@
 from base.backend.servicebase import ServiceBase
-from base.models import State, TransactionType, Transaction
+from base.models import State, TransactionType, Transaction, UserIdentity
 
 
 class StateService(ServiceBase):
@@ -13,3 +13,7 @@ class TransactionTypeService(ServiceBase):
 class TransactionService(ServiceBase):
     """ Service for transaction """
     manager = Transaction.objects
+
+class UserIdentityService(ServiceBase):
+    """ Service for transaction """
+    manager = UserIdentity.objects
