@@ -684,7 +684,7 @@ class BooksAdministration(TransactionLogBase):
                     F('author__salutation'), Value(' '), F('author__first_name'), Value(' '), F('author__last_name'))
             ).values().order_by('-date_created')
             if not issued_books:
-                return {'code': '300.003.008', 'message': 'Failed to get books'}
+                return {'code': '300.003.008', 'message': 'Failed to filter books'}
             return {'code': '100.000.000', 'data': list(issued_books)}
         except Exception as e:
             lgr.exception(f"Error during return book : {e}")
