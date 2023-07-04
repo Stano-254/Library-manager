@@ -96,7 +96,7 @@ def create_token():
     try:
         data_string = binascii.hexlify(os.urandom(15)).decode()
         data_bytes = data_string.encode("utf-8")
-        return base64.b64encode(data_bytes)
+        return str(base64.b64encode(data_bytes))
     except Exception as e:
         lgr.exception('generate_token Exception: %s', e)
     return None
